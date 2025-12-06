@@ -31,6 +31,31 @@ body {
     overflow: hidden;
 }
 
+/* === NEW YEAR THEME — SNOW CONTAINER === */
+#snowContainer {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 5000;
+}
+
+.snowflake {
+    position: absolute;
+    top: -12px;
+    font-size: 14px;
+    opacity: 0.9;
+    animation: snowFall linear infinite;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+}
+
+@keyframes snowFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0.4; }
+}
+
 /* === ВЕРХНЯЯ ПАНЕЛЬ === */
 .top-bar {
     display: flex;
@@ -172,6 +197,20 @@ body {
     overflow: hidden;
 }
 
+/* === NEW YEAR THEME — WINTER SCENE === */
+.winter-scene .scene-bg {
+    background: linear-gradient(180deg, #d8f7ff, #9bd7ff);
+}
+
+.winter-scene .shop-roof {
+    background: linear-gradient(145deg, #ff6d6d, #b62d2d);
+    box-shadow: 0 5px 0 rgba(100,20,20,0.9), 0 0 12px rgba(255,255,255,0.8);
+}
+
+.winter-scene .shop-title {
+    text-shadow: 0 0 6px white;
+}
+
 /* Шаурмная */
 .kebab-shop {
     width: 80%;
@@ -310,6 +349,11 @@ body {
     bottom: 80px;
 }
 
+/* === NEW YEAR — BOOST PULSE === */
+.winter-scene #boostIndicator {
+    box-shadow: 0 0 12px 4px rgba(255,255,255,0.7);
+}
+
 /* Энергия */
 .energy-bar {
     margin-top: 10px;
@@ -364,6 +408,7 @@ body {
     color: #fff;
     font-size: 11px;
 }
+
 /* === АНИМАЦИИ КНОПОК === */
 
 /* уменьшение при нажатии */
@@ -414,7 +459,7 @@ body {
     transition: box-shadow 0.2s ease;
 }
 
-/* тряска (например для копилки) */
+/* тряска */
 .shake {
     animation: shakeAnim 0.4s ease;
 }
@@ -425,7 +470,8 @@ body {
     50% { transform: translateX(4px); }
     75% { transform: translateX(-3px); }
     100% { transform: translateX(0); }
-} 
+}
+
 /* === PREMIUM SHOP POPUP === */
 .popup {
     position: fixed;
@@ -534,22 +580,19 @@ body {
     font-size: 14px;
     box-shadow: 0 4px 0 rgba(150,40,90,0.8);
 }
-/* === КНОПКА ЗАКРЫТИЯ МАГАЗИНА === */
-.popup-close {
-    margin-top: 18px;
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(145deg, #a8b8ff, #7c5eff);
-    border: none;
-    border-radius: 14px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 800;
-    box-shadow: 0 4px 0 rgba(60,40,140,0.6);
+
+.upgrade-buy:active {
+    transform: scale(0.92);
 }
 
-.popup-close:active {
-    transform: scale(0.95);
+/* Вспышка покупки */
+.buy-flash {
+    animation: flash 0.5s ease;
+}
+
+@keyframes flash {
+    0% { box-shadow: 0 0 18px #fff; }
+    100% { box-shadow: none; }
 }
 
 /* Адаптация под маленькие смартфоны */
@@ -567,17 +610,4 @@ body {
         font-size: 12px;
         padding: 8px 10px;
     }
-}
-.upgrade-buy:active {
-    transform: scale(0.92);
-}
-
-/* Вспышка покупки */
-.buy-flash {
-    animation: flash 0.5s ease;
-}
-
-@keyframes flash {
-    0% { box-shadow: 0 0 18px #fff; }
-    100% { box-shadow: none; }
 }
