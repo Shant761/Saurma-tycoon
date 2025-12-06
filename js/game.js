@@ -20,6 +20,17 @@ document.addEventListener("DOMContentLoaded", () => {
             snowflakes: 0
         },
 
+        // --- СЕЗОН 1: ГОЛОДНЫЙ ПОВАР ---
+        season: {
+            currentLevel: 1,   // 1..7
+            maxLevel: 7
+        },
+
+        // --- СТАТИСТИКА ---
+        stats: {
+            shawarmasSold: 0
+        },
+
         // --- УЛУЧШЕНИЯ ---
         upgrades: {
             clickIncome: { level: 1, baseCost: 50, icon: "💰", name: "Доход за клик" },
@@ -27,6 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
             energyMax:   { level: 0, baseCost: 90,  icon: "⚡", name: "Макс. энергия" },
             queueSize:   { level: 0, baseCost: 70,  icon: "🚶", name: "Очередь клиентов" }
         }
+    };
+
+    // === ПУТИ К ФОНАМ СЕЗОНА 1 ===
+    const seasonBackgrounds = {
+        1: "img/season1_level1.png",
+        2: "img/season1_level2.png",
+        3: "img/season1_level3.png",
+        4: "img/season1_level4.png",
+        5: "img/season1_level5.png",
+        6: "img/season1_level6.png",
+        7: "img/season1_level7.png"
     };
 
     // === ЭЛЕМЕНТЫ ===
@@ -61,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const snowContainer  = document.getElementById("snowContainer");
     const sceneRoot      = document.querySelector(".scene");
+    const sceneBgEl      = document.querySelector(".scene-bg");
+    const kebabShopEl    = document.querySelector(".kebab-shop"); // старый CSS-домик
 
     // === ВСПОМОГАТЕЛЬНЫЕ ===
     function addLog(message) {
@@ -89,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
         boostLabelEl.textContent = `x${state.boostMultiplier}`;
     }
 
-
     // === АНИМАЦИИ ===
     function animateButton(btn) {
         btn.classList.add("button-press");
@@ -110,7 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => el.remove(), 900);
     }
 
-
     // === НОВОГОДНИЙ СНЕГ ===
     function spawnSnowflake() {
         if (!state.event.newYear) return;
@@ -127,11 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (state.event.newYear) {
         setInterval(spawnSnowflake, 250);
-        // зимнее оформление сцены
         sceneRoot.classList.add("winter-scene");
         addLog("Новогодний ивент активен!");
     }
-
 
     // === БУСТ ===
     function activateBoost(multiplier = 3, duration = 15000) {
@@ -155,31 +175,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }, duration);
     }
 
-
-    // === НОВОГОДНИЙ БУСТ (Оффер 2) ===
+    // Новый год: оффер 2 = мягкий буст x2
     btnOffer2.addEventListener("click", () => {
         animateButton(btnOffer2);
         activateBoost(2, 10000);
         addLog("🎄 Новогодний буст x2!");
     });
 
-
     // === ИВЕНТОВАЯ ВАЛЮТА — СНЕЖИНКИ ===
     function tryDropSnowflakeReward(x, y) {
         if (!state.event.newYear) return;
-
         if (Math.random() < 0.15) {
             state.event.snowflakes++;
             spawnFloatingText("❄️ +1", x, y);
         }
     }
 
-
     // === РАСЧЁТ СТОИМОСТИ УЛУЧШЕНИЙ ===
     function getUpgradeCost(up) {
         return Math.floor(up.baseCost * Math.pow(1.25, up.level));
     }
-
 
     // === ПОКУПКА УЛУЧШЕНИЯ ===
     function buyUpgrade(key) {
@@ -205,12 +220,12 @@ document.addEventListener("DOMContentLoaded", () => {
         updateEnergyView();
         updateQueueView();
         renderUpgrades();
+        checkSeasonProgress("upgrade");
 
         addLog(`Улучшено: ${up.name}`);
     }
 
-
-    // === ОТРИСОВКА МАГАЗИНА ===
+    // === МАГАЗИН УЛУЧШЕНИЙ ===
     function renderUpgrades() {
         upgradeList.innerHTML = "";
 
@@ -242,8 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-    // === ОТКРЫТИЕ / ЗАКРЫТИЕ МАГАЗИНА ===
+    // === POPUP МАГАЗИНА ===
     btnShop.addEventListener("click", () => {
         animateButton(btnShop);
         shopPopup.classList.remove("hidden");
@@ -254,20 +268,190 @@ document.addEventListener("DOMContentLoaded", () => {
         shopPopup.classList.add("hidden");
     });
 
+    // === СЕЗОН 1: ФОНЫ И ПРОГРЕСС ===
+
+    // применяем фон по текущему уровню
+    function applySeasonBackground() {
+        if (!sceneBgEl) return;
+
+        // прячем старый CSS-домик, фон теперь картинка
+        if (kebabShopEl) {
+            kebabShopEl.style.display = "none";
+        }
+
+        const lvl = state.season.currentLevel;
+        const url = seasonBackgrounds[lvl];
+
+        if (url) {
+            sceneBgEl.style.backgroundImage = `url("${url}")`;
+            sceneBgEl.style.backgroundSize = "cover";
+            sceneBgEl.style.backgroundPosition = "center";
+        }
+    }
+
+    // награда за новый уровень сезона
+    function giveSeasonReward(level) {
+        let msg = "";
+
+        switch (level) {
+            case 2:
+                state.money += 100;
+                msg = "Уровень 2: Отдаём долги. Бонус: +100$";
+                break;
+            case 3:
+                state.incomePerClick += 3;
+                msg = "Уровень 3: Первый мангал. Доход за клик увеличен!";
+                break;
+            case 4:
+                state.queueMax += 3;
+                msg = "Уровень 4: Первый клиент. Очередь клиентов увеличена!";
+                break;
+            case 5:
+                state.energyMax += 15;
+                state.energy = state.energyMax;
+                msg = "Уровень 5: В доме тепло. Энергия увеличена и восстановлена!";
+                break;
+            case 6:
+                activateBoost(2, 20000);
+                msg = "Уровень 6: Да здравствует свет! Временный буст x2!";
+                break;
+            case 7:
+                state.money += 5000;
+                msg = "Уровень 7: Мы выкарабкались! Праздничный бонус +5000$";
+                break;
+        }
+
+        updateMoneyView();
+        updateEnergyView();
+        updateQueueView();
+
+        if (msg) addLog(msg);
+    }
+
+    // проверка условий перехода на следующий уровень
+    function checkSeasonProgress(triggerSource) {
+        const lvl = state.season.currentLevel;
+        if (lvl >= state.season.maxLevel) return;
+
+        const money = state.money;
+        const sold  = state.stats.shawarmasSold;
+
+        let canLevelUp = false;
+
+        switch (lvl) {
+            case 1: // → 2: первые деньги
+                if (money >= 100) canLevelUp = true;
+                break;
+            case 2: // → 3: чуть больше денег
+                if (money >= 300) canLevelUp = true;
+                break;
+            case 3: // → 4: достаточно продали
+                if (sold >= 30) canLevelUp = true;
+                break;
+            case 4: // → 5: ещё улучшения и деньги
+                if (money >= 1000) canLevelUp = true;
+                break;
+            case 5: // → 6: много продаж
+                if (sold >= 100) canLevelUp = true;
+                break;
+            case 6: // → 7: финальный капитал
+                if (money >= 5000) canLevelUp = true;
+                break;
+        }
+
+        if (!canLevelUp) return;
+
+        state.season.currentLevel++;
+        addLog(`Открыт новый уровень сезона: ${state.season.currentLevel}`);
+        giveSeasonReward(state.season.currentLevel);
+        applySeasonBackground();
+        saveGame();
+    }
+
+    // === АВТОСОХРАНЕНИЕ ===
+    function saveGame() {
+        try {
+            const data = {
+                money: state.money,
+                incomePerClick: state.incomePerClick,
+                queueCurrent: state.queueCurrent,
+                queueMax: state.queueMax,
+                energy: state.energy,
+                energyMax: state.energyMax,
+                boostMultiplier: state.boostMultiplier,
+                upgrades: {
+                    clickIncome: state.upgrades.clickIncome.level,
+                    autoCook: state.upgrades.autoCook.level,
+                    energyMax: state.upgrades.energyMax.level,
+                    queueSize: state.upgrades.queueSize.level
+                },
+                seasonLevel: state.season.currentLevel,
+                stats: {
+                    shawarmasSold: state.stats.shawarmasSold
+                },
+                eventSnowflakes: state.event.snowflakes
+            };
+            localStorage.setItem("shaurmaSave", JSON.stringify(data));
+        } catch (e) {
+            console.warn("Не удалось сохранить игру", e);
+        }
+    }
+
+    function loadGame() {
+        try {
+            const raw = localStorage.getItem("shaurmaSave");
+            if (!raw) return;
+            const data = JSON.parse(raw);
+
+            if (typeof data.money === "number") state.money = data.money;
+            if (typeof data.incomePerClick === "number") state.incomePerClick = data.incomePerClick;
+            if (typeof data.queueCurrent === "number") state.queueCurrent = data.queueCurrent;
+            if (typeof data.queueMax === "number") state.queueMax = data.queueMax;
+            if (typeof data.energy === "number") state.energy = data.energy;
+            if (typeof data.energyMax === "number") state.energyMax = data.energyMax;
+            if (typeof data.boostMultiplier === "number") state.boostMultiplier = data.boostMultiplier;
+
+            if (data.upgrades) {
+                state.upgrades.clickIncome.level = data.upgrades.clickIncome ?? state.upgrades.clickIncome.level;
+                state.upgrades.autoCook.level    = data.upgrades.autoCook ?? state.upgrades.autoCook.level;
+                state.upgrades.energyMax.level   = data.upgrades.energyMax ?? state.upgrades.energyMax.level;
+                state.upgrades.queueSize.level   = data.upgrades.queueSize ?? state.upgrades.queueSize.level;
+            }
+
+            if (typeof data.seasonLevel === "number") {
+                state.season.currentLevel = Math.min(
+                    state.season.maxLevel,
+                    Math.max(1, data.seasonLevel)
+                );
+            }
+
+            if (data.stats && typeof data.stats.shawarmasSold === "number") {
+                state.stats.shawarmasSold = data.stats.shawarmasSold;
+            }
+
+            if (typeof data.eventSnowflakes === "number") {
+                state.event.snowflakes = data.eventSnowflakes;
+            }
+
+            addLog("Прогресс загружен");
+        } catch (e) {
+            console.warn("Не удалось загрузить сохранение", e);
+        }
+    }
 
     // === КНОПКА ГОТОВКИ ===
     cookButton.addEventListener("click", (event) => {
         animateButton(cookButton);
 
-        const income = state.incomePerClick * state.boostMultiplier;
-
-        spawnFloatingText(`+${income}$`, event.clientX, event.clientY - 20);
-        tryDropSnowflakeReward(event.clientX, event.clientY - 40);
-
         if (state.energy <= 0) {
             addLog("Недостаточно энергии!");
             return;
         }
+
+        const income = state.incomePerClick * state.boostMultiplier;
+
+        spawnFloatingText(`+${income}$`, event.clientX, event.clientY - 20);
+        tryDropSnowflakeReward(event.clientX, event.clientY - 40);
 
         state.money += income;
         state.energy = Math.max(0, state.energy - 1);
@@ -275,25 +459,31 @@ document.addEventListener("DOMContentLoaded", () => {
         state.queueCurrent++;
         if (state.queueCurrent > state.queueMax) state.queueCurrent = 1;
 
+        state.stats.shawarmasSold++;
+
         updateMoneyView();
         updateEnergyView();
         updateQueueView();
 
         addLog(`+${income}$ — продана шаурма`);
+        checkSeasonProgress("cook");
+        saveGame();
     });
-
 
     // === ПРОЧИЕ КНОПКИ ===
     btnSuppliers.addEventListener("click", () => addLog("Поставщики"));
     btnQuests.addEventListener("click", () => addLog("Квесты"));
     btnOffer1.addEventListener("click", () => addLog("Оффер 1"));
     btnBoost.addEventListener("click", () => activateBoost(3, 15000));
+
     btnPiggy.addEventListener("click", () => {
         btnPiggy.classList.add("shake");
         setTimeout(() => btnPiggy.classList.remove("shake"), 400);
         state.money += 50;
         updateMoneyView();
         addLog("Копилка: +50$");
+        checkSeasonProgress("piggy");
+        saveGame();
     });
 
     btnMenu.addEventListener("click", () => addLog("Меню"));
@@ -303,11 +493,18 @@ document.addEventListener("DOMContentLoaded", () => {
     btnFriends.addEventListener("click", () => addLog("Друзья"));
     btnTrophy.addEventListener("click", () => addLog("Турнир"));
 
-
     // === ИНИЦИАЛИЗАЦИЯ ===
+    loadGame();
+    applySeasonBackground();
+
     updateMoneyView();
     updateEnergyView();
     updateQueueView();
     updateBoostView();
+
+    addLog(`Сезон 1 • Уровень ${state.season.currentLevel}`);
     addLog("Игра загружена");
+
+    // Автосохранение раз в 10 секунд
+    setInterval(saveGame, 10000);
 });
