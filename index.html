@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Shaurma Tycoon — CIA SOFT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="css/style.css" rel="stylesheet" />
+</head>
+<body>
+<div class="game-container">
+    <div class="card">
+        <div class="header">
+            <div class="title">
+                <span>🌯</span> SHAURMA EMPIRE
+            </div>
+            <div class="badge">Web v1.0</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-label">Баланс</div>
+                <div class="stat-value" id="money">0 ₽</div>
+                <div class="stat-sub">Цель: 1 000 000 ₽</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">За клик</div>
+                <div class="stat-value" id="perClick">+1 ₽</div>
+                <div class="stat-sub">ручная скорость</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">В секунду</div>
+                <div class="stat-value" id="perSecond">0 ₽</div>
+                <div class="stat-sub">авто доход</div>
+            </div>
+        </div>
+
+        <div class="shawarma-area">
+            <button class="shawarma-button" id="shawarma">
+                <div class="shawarma-ring"></div>
+                🌯
+            </button>
+            <div class="click-hint">Кликай по шаурме, чтобы зарабатывать!</div>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <div class="card">
+        <div class="header">
+            <div class="panel-title">Бизнес-панель</div>
+        </div>
+
+        <div class="upgrades">
+            <h3>Улучшения</h3>
+
+            <button id="buyClick" class="upgrade-btn">
+                Улучшить доход за клик (+1) — <span id="clickPrice">50</span> ₽
+            </button>
+
+            <button id="buyAuto" class="upgrade-btn">
+                Нанять ночного повара (+авто доxод) — <span id="autoPrice">120</span> ₽
+            </button>
+
+            <button id="resetGame" class="reset-btn">
+                Сбросить игру
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
