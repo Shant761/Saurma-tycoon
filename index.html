@@ -1,7 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaurma Tycoon</title>
+
+    <!-- ПОДКЛЮЧЕНИЕ CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
 <div id="app">
   <div class="game-screen">
 
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <header class="top-bar">
       <button class="icon-button menu-button">☰</button>
 
@@ -10,7 +21,7 @@
           <div class="hud-icon">🧆</div>
           <div class="hud-text">
             <span class="hud-label">Деньги</span>
-            <span id="moneyValue" class="hud-value">252 940</span>
+            <span id="moneyValue" class="hud-value">0</span>
           </div>
           <button class="hud-plus">+</button>
         </div>
@@ -19,7 +30,7 @@
           <div class="hud-icon">⚡</div>
           <div class="hud-text">
             <span class="hud-label">Энергия</span>
-            <span id="energyValue" class="hud-value">50 / 50</span>
+            <span id="energyValue" class="hud-value">50/50</span>
           </div>
         </div>
       </div>
@@ -30,16 +41,14 @@
       </div>
     </header>
 
-    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
     <div class="main-layout">
 
-      <!-- ЛЕВАЯ КОЛОНКА -->
       <aside class="side-column left-column">
         <button class="side-card">
           <div class="side-icon">🏪</div>
           <div class="side-text">
             <span class="side-title">Магазин</span>
-            <span class="side-sub">Новые улучшения</span>
+            <span class="side-sub">Улучшения</span>
           </div>
         </button>
 
@@ -60,7 +69,6 @@
         </button>
       </aside>
 
-      <!-- ЦЕНТРАЛЬНАЯ СЦЕНА -->
       <main class="scene">
         <div class="scene-bg">
           <div class="kebab-shop">
@@ -87,7 +95,6 @@
         </div>
       </main>
 
-      <!-- ПРАВАЯ КОЛОНКА -->
       <aside class="side-column right-column">
         <button class="side-card offer">
           <div class="side-icon">🔥</div>
@@ -100,8 +107,8 @@
         <button class="side-card offer">
           <div class="side-icon">🥙</div>
           <div class="side-text">
-            <span class="side-title">Особая</span>
-            <span class="side-sub">Шаурма дня</span>
+            <span class="side-title">Шаурма дня</span>
+            <span class="side-sub">новинка</span>
           </div>
         </button>
 
@@ -116,12 +123,11 @@
 
     </div>
 
-    <!-- НИЖНЯЯ ПАНЕЛЬ -->
     <footer class="bottom-bar">
       <div class="bottom-top">
         <div class="event-banner">
           <span class="event-label">ИВЕНТ: НОЧЬ ШАУРМЫ</span>
-          <span class="event-timer">Осталось: 3д 7ч</span>
+          <span class="event-timer">3д 7ч</span>
         </div>
       </div>
 
@@ -140,9 +146,9 @@
         <div class="energy-bar">
           <span>⚡</span>
           <div class="energy-track">
-            <div class="energy-fill" style="width: 100%;"></div>
+            <div class="energy-fill"></div>
           </div>
-          <span class="energy-text">50/50 +105</span>
+          <span class="energy-text">50/50</span>
         </div>
       </div>
 
@@ -155,13 +161,16 @@
       </div>
     </footer>
 
-    <!-- ЛОГ -->
     <div class="log-panel">
       <ul id="logList">
-        <li>+5$ Продана шаурма</li>
-        <li>Клиент доволен 😋</li>
       </ul>
     </div>
 
   </div>
 </div>
+
+<!-- ПОДКЛЮЧЕНИЕ JS -->
+<script src="js/game.js"></script>
+
+</body>
+</html>
