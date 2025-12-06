@@ -10,11 +10,11 @@
 </head>
 <body>
 
-<!-- ОВЕРЛЕЙ ДЛЯ НОВОГОДНЕГО СНЕГА -->
+<!-- НОВОГОДНИЙ СНЕГ -->
 <div id="snowContainer"></div>
 
 <div id="app">
-  <div class="game-screen">
+  <div class="game-screen"> <!-- ТЕПЕРЬ СЮДА СТАВИТСЯ ФОН -->
 
     <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <header class="top-bar">
@@ -77,29 +77,23 @@
 
       <!-- ЦЕНТРАЛЬНАЯ СЦЕНА -->
       <main class="scene">
-        <div class="scene-bg">
-          <div class="kebab-shop">
-            <div class="shop-roof"></div>
-            <div class="shop-body">
-              <span class="shop-title">Shaurma House</span>
-            </div>
-            <div class="shop-base"></div>
-          </div>
 
-          <div class="scene-progress">
-            <span class="progress-label">Очередь клиентов</span>
-            <div class="progress-bar">
-              <div id="queueFill" class="progress-fill"></div>
-            </div>
-            <span id="queueValue" class="progress-value">5 / 11</span>
+        <!-- ОЧЕРЕДЬ -->
+        <div class="scene-progress">
+          <span class="progress-label">Очередь клиентов</span>
+          <div class="progress-bar">
+            <div id="queueFill" class="progress-fill"></div>
           </div>
-
-          <div class="piggy-card" id="btnPiggy">
-            <span class="piggy-text">КОПИЛКА ПОЛНА!</span>
-            <span class="piggy-sub">Нажми, чтобы забрать</span>
-            <div class="piggy-icon">🐷</div>
-          </div>
+          <span id="queueValue" class="progress-value">5 / 11</span>
         </div>
+
+        <!-- КОПИЛКА -->
+        <div class="piggy-card" id="btnPiggy">
+          <span class="piggy-text">КОПИЛКА ПОЛНА!</span>
+          <span class="piggy-sub">Нажми, чтобы забрать</span>
+          <div class="piggy-icon">🐷</div>
+        </div>
+
       </main>
 
       <!-- ПРАВАЯ КОЛОНКА -->
@@ -170,7 +164,7 @@
       </div>
     </footer>
 
-    <!-- ЛОГ ДЕЙСТВИЙ -->
+    <!-- ЛОГ -->
     <div class="log-panel">
       <ul id="logList"></ul>
     </div>
@@ -178,20 +172,17 @@
   </div>
 </div>
 
-<!-- PREMIUM SHOP POPUP -->
+<!-- МАГАЗИН -->
 <div id="shopPopup" class="popup hidden">
     <div class="popup-bg"></div>
-
     <div class="popup-window">
         <h2 class="popup-title">Улучшения</h2>
-
         <div id="upgradeList" class="upgrade-list"></div>
-
         <button id="closeShop" class="popup-close">Закрыть</button>
     </div>
 </div>
 
-<!-- СКРИПТ ИГРЫ -->
+<!-- СКРИПТ -->
 <script src="js/game.js"></script>
 
 </body>
