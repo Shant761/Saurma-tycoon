@@ -14,32 +14,18 @@ document.addEventListener("DOMContentLoaded", () => {
         boostActive: false,
         boostTimerId: null,
 
+        // --- НОВОГОДНИЙ ИВЕНТ ---
+        event: {
+            newYear: true,
+            snowflakes: 0
+        },
+
         // --- УЛУЧШЕНИЯ ---
         upgrades: {
-            clickIncome: { 
-                level: 1, 
-                baseCost: 50, 
-                icon: "💰",
-                name: "Доход за клик"
-            },
-            autoCook: { 
-                level: 0, 
-                baseCost: 120, 
-                icon: "🤖",
-                name: "Авто-повар"
-            },
-            energyMax: { 
-                level: 0, 
-                baseCost: 90, 
-                icon: "⚡",
-                name: "Макс. энергия"
-            },
-            queueSize: { 
-                level: 0, 
-                baseCost: 70, 
-                icon: "🚶",
-                name: "Очередь клиентов"
-            }
+            clickIncome: { level: 1, baseCost: 50, icon: "💰", name: "Доход за клик" },
+            autoCook:    { level: 0, baseCost: 120, icon: "🤖", name: "Авто-повар" },
+            energyMax:   { level: 0, baseCost: 90,  icon: "⚡", name: "Макс. энергия" },
+            queueSize:   { level: 0, baseCost: 70,  icon: "🚶", name: "Очередь клиентов" }
         }
     };
 
@@ -55,12 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const boostIndicator = document.getElementById("boostIndicator");
     const logList        = document.getElementById("logList");
 
-    // Магазин
     const shopPopup      = document.getElementById("shopPopup");
     const upgradeList    = document.getElementById("upgradeList");
     const closeShopBtn   = document.getElementById("closeShop");
 
-    // Кнопки интерфейса
     const btnShop        = document.getElementById("btnShop");
     const btnSuppliers   = document.getElementById("btnSuppliers");
     const btnQuests      = document.getElementById("btnQuests");
@@ -74,6 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnHome        = document.getElementById("btnHome");
     const btnFriends     = document.getElementById("btnFriends");
     const btnTrophy      = document.getElementById("btnTrophy");
+
+    const snowContainer  = document.getElementById("snowContainer");
+    const sceneRoot      = document.querySelector(".scene");
 
     // === ВСПОМОГАТЕЛЬНЫЕ ===
     function addLog(message) {
@@ -102,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         boostLabelEl.textContent = `x${state.boostMultiplier}`;
     }
 
+
     // === АНИМАЦИИ ===
     function animateButton(btn) {
         btn.classList.add("button-press");
@@ -121,6 +109,29 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 900);
     }
+
+
+    // === НОВОГОДНИЙ СНЕГ ===
+    function spawnSnowflake() {
+        if (!state.event.newYear) return;
+        const flake = document.createElement("div");
+        flake.className = "snowflake";
+        flake.textContent = "❄️";
+        flake.style.left = Math.random() * 100 + "vw";
+        flake.style.fontSize = 12 + Math.random() * 14 + "px";
+        flake.style.animationDuration = 3 + Math.random() * 4 + "s";
+
+        snowContainer.appendChild(flake);
+        setTimeout(() => flake.remove(), 7000);
+    }
+
+    if (state.event.newYear) {
+        setInterval(spawnSnowflake, 250);
+        // зимнее оформление сцены
+        sceneRoot.classList.add("winter-scene");
+        addLog("Новогодний ивент активен!");
+    }
+
 
     // === БУСТ ===
     function activateBoost(multiplier = 3, duration = 15000) {
@@ -144,10 +155,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }, duration);
     }
 
+
+    // === НОВОГОДНИЙ БУСТ (Оффер 2) ===
+    btnOffer2.addEventListener("click", () => {
+        animateButton(btnOffer2);
+        activateBoost(2, 10000);
+        addLog("🎄 Новогодний буст x2!");
+    });
+
+
+    // === ИВЕНТОВАЯ ВАЛЮТА — СНЕЖИНКИ ===
+    function tryDropSnowflakeReward(x, y) {
+        if (!state.event.newYear) return;
+
+        if (Math.random() < 0.15) {
+            state.event.snowflakes++;
+            spawnFloatingText("❄️ +1", x, y);
+        }
+    }
+
+
     // === РАСЧЁТ СТОИМОСТИ УЛУЧШЕНИЙ ===
     function getUpgradeCost(up) {
         return Math.floor(up.baseCost * Math.pow(1.25, up.level));
     }
+
 
     // === ПОКУПКА УЛУЧШЕНИЯ ===
     function buyUpgrade(key) {
@@ -162,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
         state.money -= cost;
         up.level++;
 
-        // применение эффектов:
         if (key === "clickIncome") state.incomePerClick += 2;
         if (key === "energyMax") {
             state.energyMax += 5;
@@ -173,11 +204,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateMoneyView();
         updateEnergyView();
         updateQueueView();
-
         renderUpgrades();
 
         addLog(`Улучшено: ${up.name}`);
     }
+
 
     // === ОТРИСОВКА МАГАЗИНА ===
     function renderUpgrades() {
@@ -207,12 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
             card.querySelector(".upgrade-buy").addEventListener("click", () => buyUpgrade(key));
-
             upgradeList.appendChild(card);
         }
     }
 
-    // === ОТКРЫТИЕ И ЗАКРЫТИЕ МАГАЗИНА ===
+
+    // === ОТКРЫТИЕ / ЗАКРЫТИЕ МАГАЗИНА ===
     btnShop.addEventListener("click", () => {
         animateButton(btnShop);
         shopPopup.classList.remove("hidden");
@@ -223,22 +254,21 @@ document.addEventListener("DOMContentLoaded", () => {
         shopPopup.classList.add("hidden");
     });
 
+
     // === КНОПКА ГОТОВКИ ===
     cookButton.addEventListener("click", (event) => {
         animateButton(cookButton);
 
-        spawnFloatingText(
-            `+${state.incomePerClick * state.boostMultiplier}$`,
-            event.clientX,
-            event.clientY - 20
-        );
+        const income = state.incomePerClick * state.boostMultiplier;
+
+        spawnFloatingText(`+${income}$`, event.clientX, event.clientY - 20);
+        tryDropSnowflakeReward(event.clientX, event.clientY - 40);
 
         if (state.energy <= 0) {
             addLog("Недостаточно энергии!");
             return;
         }
 
-        const income = state.incomePerClick * state.boostMultiplier;
         state.money += income;
         state.energy = Math.max(0, state.energy - 1);
 
@@ -252,11 +282,11 @@ document.addEventListener("DOMContentLoaded", () => {
         addLog(`+${income}$ — продана шаурма`);
     });
 
-    // === КНОПКИ МЕНЮ (ЛОГИ) ===
+
+    // === ПРОЧИЕ КНОПКИ ===
     btnSuppliers.addEventListener("click", () => addLog("Поставщики"));
     btnQuests.addEventListener("click", () => addLog("Квесты"));
     btnOffer1.addEventListener("click", () => addLog("Оффер 1"));
-    btnOffer2.addEventListener("click", () => addLog("Оффер 2"));
     btnBoost.addEventListener("click", () => activateBoost(3, 15000));
     btnPiggy.addEventListener("click", () => {
         btnPiggy.classList.add("shake");
@@ -272,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnHome.addEventListener("click", () => addLog("Главная"));
     btnFriends.addEventListener("click", () => addLog("Друзья"));
     btnTrophy.addEventListener("click", () => addLog("Турнир"));
+
 
     // === ИНИЦИАЛИЗАЦИЯ ===
     updateMoneyView();
