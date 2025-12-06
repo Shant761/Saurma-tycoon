@@ -1,7 +1,6 @@
 // js/game.js
 
 document.addEventListener("DOMContentLoaded", () => {
-
     // === СОСТОЯНИЕ ИГРЫ ===
     const state = {
         money: 0,
@@ -16,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // статистика
         stats: {
-            shawarmasSold: 0,   // сколько шаурм продано
+            shawarmasSold: 0,   // продано шаурм
             totalEarned: 0      // всего заработано за всё время (для уровней)
         },
 
@@ -56,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // === ФОНЫ ДЛЯ УРОВНЕЙ СЕЗОНА 1 ===
-    // добавь файлы в img/: season1_level1.png ... season1_level7.png
+    // файлы должны лежать в /img
     const seasonBackgrounds = {
         1: "img/season1_level1.png",
         2: "img/season1_level2.png",
@@ -67,43 +66,42 @@ document.addEventListener("DOMContentLoaded", () => {
         7: "img/season1_level7.png"
     };
 
-    // === УСЛОВИЯ ПЕРЕХОДА МЕЖДУ УРОВНЯМИ СЕЗОНА 1 ===
-    // основаны на твоём лоре, цифры можно потом подправить
+    // === УСЛОВИЯ ПЕРЕХОДА МЕЖДУ УРОВНЯМИ (по totalEarned, в ֏) ===
     const seasonLevelConditions = {
-        // 1 уровень: "собрать 5000 ֏, чтобы не умереть"
+        // 1 ➜ 2: собрать 5 000 ֏ чтобы не умереть
         1: {
             minTotalEarned: 5000,
             description: "Ты выжил, собрав 5 000 ֏ и не умер от голода"
         },
-        // 2 уровень: "отдать долги 10 000 ֏"
+        // 2 ➜ 3: отдать долги 10 000 => суммарно 15 000
         2: {
-            minTotalEarned: 15000, // 5k + 10k
+            minTotalEarned: 15000,
             description: "Отдал долги на 10 000 ֏ и стал свободнее"
         },
-        // 3 уровень: "собрать мангал"
+        // 3 ➜ 4: собрать мангал — считаем по заработку
         3: {
             minTotalEarned: 30000,
             description: "Собрал свой первый мангал"
         },
-        // 4 уровень: "первый клиент 15 000 ֏"
+        // 4 ➜ 5: первый клиент 15 000 ֏
         4: {
             minTotalEarned: 45000,
             description: "Поймал первого богатого клиента на 15 000 ֏"
         },
-        // 5 уровень: "купить отопление"
+        // 5 ➜ 6: купить отопление
         5: {
             minTotalEarned: 65000,
             description: "Смог позволить себе отопление в доме"
         },
-        // 6 уровень: "купить генератор"
+        // 6 ➜ 7: купить генератор
         6: {
             minTotalEarned: 90000,
             description: "Купил генератор — да здравствует свет!"
         }
-        // 7 — финальный, дальше нет условий
+        // 7 — финал сезона
     };
 
-    // === ЭЛЕМЕНТЫ DOM ===
+    // === DOM-ЭЛЕМЕНТЫ ===
     const moneyValueEl   = document.getElementById("moneyValue");
     const energyValueEl  = document.getElementById("energyValue");
     const energyTextEl   = document.getElementById("energyText");
@@ -138,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === ВСПОМОГАТЕЛЬНЫЕ ===
     function addLog(message) {
+        if (!logList) return;
         const li = document.createElement("li");
         li.textContent = message;
         logList.prepend(li);
@@ -191,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => el.remove(), 900);
     }
 
-    // === НОВОГОДНИЙ СНЕГ ===
+    // === СНЕГ ===
     function spawnSnowflake() {
         if (!snowContainer) return;
 
@@ -206,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => flake.remove(), 8000);
     }
 
-    // лёгкий снег постоянно
     setInterval(spawnSnowflake, 250);
 
     // === БУСТ ===
@@ -233,19 +231,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }, duration);
     }
 
-    // === СНЕЖИНКИ-БОНУСЫ (опционально, пока только визуал) ===
     function tryDropSnowflakeReward(x, y) {
         if (Math.random() < 0.12) {
             spawnFloatingText("❄️", x, y - 20);
         }
     }
 
-    // === РАСЧЁТ СТОИМОСТИ УЛУЧШЕНИЙ ===
+    // === УЛУЧШЕНИЯ ===
     function getUpgradeCost(up) {
         return Math.floor(up.baseCost * Math.pow(1.25, up.level));
     }
 
-    // === ПОКУПКА УЛУЧШЕНИЯ ===
     function buyUpgrade(key) {
         const up = state.upgrades[key];
         const cost = getUpgradeCost(up);
@@ -258,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
         state.money -= cost;
         up.level++;
 
-        // эффекты улучшений
         if (key === "clickIncome") {
             state.incomePerClick += 2;
         }
@@ -279,7 +274,6 @@ document.addEventListener("DOMContentLoaded", () => {
         checkSeasonProgress("upgrade");
     }
 
-    // === ОТРИСОВКА МАГАЗИНА ===
     function renderUpgrades() {
         upgradeList.innerHTML = "";
 
@@ -307,7 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
             card.querySelector(".upgrade-buy").addEventListener("click", () => buyUpgrade(key));
-
             upgradeList.appendChild(card);
         }
     }
@@ -323,8 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         shopPopup.classList.add("hidden");
     });
 
-    // === СЕЗОН 1: ФОН И ПРОГРЕСС ===
-
+    // === СЕЗОН 1: ФОН + ПРОГРЕСС ===
     function applySeasonBackground() {
         if (!gameScreenEl) return;
 
@@ -344,9 +336,11 @@ document.addEventListener("DOMContentLoaded", () => {
         applySeasonBackground();
         addLog(`Новый уровень сезона: ${newLevel} — ${description}`);
 
-        // мелкая награда за каждый уровень (можно менять)
-        state.money += 1000 * newLevel;
+        // маленькая награда за уровень
+        const bonus = 1000 * newLevel;
+        state.money += bonus;
         updateMoneyView();
+        addLog(`Бонус за уровень: +${formatMoney(bonus)}`);
     }
 
     function checkSeasonProgress(triggerSource) {
@@ -357,7 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!cond) return;
 
         const earned = state.stats.totalEarned;
-
         if (earned >= cond.minTotalEarned) {
             const nextLevel = lvl + 1;
             levelUpSeason(nextLevel, cond.description);
@@ -401,10 +394,12 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSuppliers.addEventListener("click", () => addLog("Поставщики (в разработке)"));
     btnQuests.addEventListener("click", () => addLog("Квесты (в разработке)"));
     btnOffer1.addEventListener("click", () => addLog("Оффер 1"));
+
     btnOffer2.addEventListener("click", () => {
         addLog("Новогодний оффер: мягкий буст x2");
         activateBoost(2, 10000);
     });
+
     btnBoost.addEventListener("click", () => activateBoost(3, 15000));
 
     btnPiggy.addEventListener("click", () => {
@@ -415,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const bonus = 500;
         state.money += bonus;
         state.stats.totalEarned += bonus;
+
         updateMoneyView();
         addLog(`Копилка: +${formatMoney(bonus)}`);
         checkSeasonProgress("piggy");
