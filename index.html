@@ -1,73 +1,167 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-    <title>Shaurma Tycoon — CIA SOFT</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="css/style.css" rel="stylesheet" />
-</head>
-<body>
-<div class="game-container">
-    <div class="card">
-        <div class="header">
-            <div class="title">
-                <span>🌯</span> SHAURMA EMPIRE
-            </div>
-            <div class="badge">Web v1.0</div>
+<div id="app">
+  <div class="game-screen">
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <header class="top-bar">
+      <button class="icon-button menu-button">☰</button>
+
+      <div class="top-bar-group">
+        <div class="hud-card currency">
+          <div class="hud-icon">🧆</div>
+          <div class="hud-text">
+            <span class="hud-label">Деньги</span>
+            <span id="moneyValue" class="hud-value">252 940</span>
+          </div>
+          <button class="hud-plus">+</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat">
-                <div class="stat-label">Баланс</div>
-                <div class="stat-value" id="money">0 ₽</div>
-                <div class="stat-sub">Цель: 1 000 000 ₽</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">За клик</div>
-                <div class="stat-value" id="perClick">+1 ₽</div>
-                <div class="stat-sub">ручная скорость</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">В секунду</div>
-                <div class="stat-value" id="perSecond">0 ₽</div>
-                <div class="stat-sub">авто доход</div>
-            </div>
+        <div class="hud-card energy">
+          <div class="hud-icon">⚡</div>
+          <div class="hud-text">
+            <span class="hud-label">Энергия</span>
+            <span id="energyValue" class="hud-value">50 / 50</span>
+          </div>
         </div>
+      </div>
 
-        <div class="shawarma-area">
-            <button class="shawarma-button" id="shawarma">
-                <div class="shawarma-ring"></div>
-                🌯
-            </button>
-            <div class="click-hint">Кликай по шаурме, чтобы зарабатывать!</div>
+      <div class="top-bar-right">
+        <div class="badge">⭐ 12</div>
+        <div class="badge crown">👑 180</div>
+      </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
+    <div class="main-layout">
+
+      <!-- ЛЕВАЯ КОЛОНКА -->
+      <aside class="side-column left-column">
+        <button class="side-card">
+          <div class="side-icon">🏪</div>
+          <div class="side-text">
+            <span class="side-title">Магазин</span>
+            <span class="side-sub">Новые улучшения</span>
+          </div>
+        </button>
+
+        <button class="side-card">
+          <div class="side-icon">📦</div>
+          <div class="side-text">
+            <span class="side-title">Поставки</span>
+            <span class="side-sub">07:27</span>
+          </div>
+        </button>
+
+        <button class="side-card">
+          <div class="side-icon">📋</div>
+          <div class="side-text">
+            <span class="side-title">Квесты</span>
+            <span class="side-sub">3 задачи</span>
+          </div>
+        </button>
+      </aside>
+
+      <!-- ЦЕНТРАЛЬНАЯ СЦЕНА -->
+      <main class="scene">
+        <div class="scene-bg">
+          <div class="kebab-shop">
+            <div class="shop-roof"></div>
+            <div class="shop-body">
+              <span class="shop-title">Shaurma House</span>
+            </div>
+            <div class="shop-base"></div>
+          </div>
+
+          <div class="scene-progress">
+            <span class="progress-label">Очередь клиентов</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 45%;"></div>
+            </div>
+            <span class="progress-value">5 / 11</span>
+          </div>
+
+          <div class="piggy-card">
+            <span class="piggy-text">КОПИЛКА ПОЛНА!</span>
+            <span class="piggy-sub">Нажми, чтобы забрать</span>
+            <div class="piggy-icon">🐷</div>
+          </div>
         </div>
+      </main>
 
-        <div class="log" id="log"></div>
+      <!-- ПРАВАЯ КОЛОНКА -->
+      <aside class="side-column right-column">
+        <button class="side-card offer">
+          <div class="side-icon">🔥</div>
+          <div class="side-text">
+            <span class="side-title">Оффер</span>
+            <span class="side-sub">-75% / 7:27</span>
+          </div>
+        </button>
+
+        <button class="side-card offer">
+          <div class="side-icon">🥙</div>
+          <div class="side-text">
+            <span class="side-title">Особая</span>
+            <span class="side-sub">Шаурма дня</span>
+          </div>
+        </button>
+
+        <button class="side-card offer">
+          <div class="side-icon">⏱</div>
+          <div class="side-text">
+            <span class="side-title">Буст</span>
+            <span class="side-sub">x3 доход</span>
+          </div>
+        </button>
+      </aside>
+
     </div>
 
-    <div class="card">
-        <div class="header">
-            <div class="panel-title">Бизнес-панель</div>
+    <!-- НИЖНЯЯ ПАНЕЛЬ -->
+    <footer class="bottom-bar">
+      <div class="bottom-top">
+        <div class="event-banner">
+          <span class="event-label">ИВЕНТ: НОЧЬ ШАУРМЫ</span>
+          <span class="event-timer">Осталось: 3д 7ч</span>
         </div>
+      </div>
 
-        <div class="upgrades">
-            <h3>Улучшения</h3>
+      <div class="bottom-main">
+        <button id="cookButton" class="main-button">
+          <span class="main-button-label">ГОТОВИТЬ ШАУРМУ</span>
+          <span class="main-button-sub">удерживай для авто-готовки</span>
+        </button>
 
-            <button id="buyClick" class="upgrade-btn">
-                Улучшить доход за клик (+1) — <span id="clickPrice">50</span> ₽
-            </button>
-
-            <button id="buyAuto" class="upgrade-btn">
-                Нанять ночного повара (+авто доxод) — <span id="autoPrice">120</span> ₽
-            </button>
-
-            <button id="resetGame" class="reset-btn">
-                Сбросить игру
-            </button>
+        <div class="multiplier-pill">
+          <span>x3</span>
         </div>
+      </div>
+
+      <div class="bottom-bottom">
+        <div class="energy-bar">
+          <span>⚡</span>
+          <div class="energy-track">
+            <div class="energy-fill" style="width: 100%;"></div>
+          </div>
+          <span class="energy-text">50/50 +105</span>
+        </div>
+      </div>
+
+      <div class="bottom-menu">
+        <button class="nav-icon">🏪</button>
+        <button class="nav-icon">❤️</button>
+        <button class="nav-icon active">🏠</button>
+        <button class="nav-icon">👥</button>
+        <button class="nav-icon">🏆</button>
+      </div>
+    </footer>
+
+    <!-- ЛОГ -->
+    <div class="log-panel">
+      <ul id="logList">
+        <li>+5$ Продана шаурма</li>
+        <li>Клиент доволен 😋</li>
+      </ul>
     </div>
+
+  </div>
 </div>
-
-<script src="js/game.js"></script>
-</body>
-</html>
