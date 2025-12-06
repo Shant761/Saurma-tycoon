@@ -534,7 +534,40 @@ body {
     font-size: 14px;
     box-shadow: 0 4px 0 rgba(150,40,90,0.8);
 }
+/* === КНОПКА ЗАКРЫТИЯ МАГАЗИНА === */
+.popup-close {
+    margin-top: 18px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(145deg, #a8b8ff, #7c5eff);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow: 0 4px 0 rgba(60,40,140,0.6);
+}
 
+.popup-close:active {
+    transform: scale(0.95);
+}
+
+/* Адаптация под маленькие смартфоны */
+@media (max-width: 380px) {
+    .upgrade-item {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .upgrade-icon {
+        font-size: 30px;
+    }
+
+    .upgrade-buy {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+}
 .upgrade-buy:active {
     transform: scale(0.92);
 }
