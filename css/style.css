@@ -364,3 +364,65 @@ body {
     color: #fff;
     font-size: 11px;
 }
+/* === АНИМАЦИИ КНОПОК === */
+
+/* уменьшение при нажатии */
+.button-press {
+    transform: scale(0.92);
+    transition: transform 0.1s ease;
+}
+
+/* возвращение */
+.button-release {
+    transform: scale(1);
+    transition: transform 0.15s ease;
+}
+
+/* пульсация (для главной кнопки) */
+.pulse {
+    animation: pulseAnim 1.6s infinite ease-in-out;
+}
+
+@keyframes pulseAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* всплывающий текст при клике (+доход) */
+.floating-text {
+    position: absolute;
+    color: #fff;
+    font-weight: 800;
+    font-size: 18px;
+    opacity: 1;
+    animation: floatUp 0.9s ease-out forwards;
+    pointer-events: none;
+    z-index: 9999;
+    text-shadow: 0 0 6px rgba(0,0,0,0.5);
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(-40px); opacity: 0; }
+}
+
+/* подсветка кнопки (буст) */
+.btn-glow {
+    box-shadow: 0 0 12px 4px rgba(255, 80, 160, 0.8);
+    transition: box-shadow 0.2s ease;
+}
+
+/* тряска (например для копилки) */
+.shake {
+    animation: shakeAnim 0.4s ease;
+}
+
+@keyframes shakeAnim {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}
