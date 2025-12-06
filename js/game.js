@@ -174,3 +174,28 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBoostView();
     addLog("Игра загружена");
 });
+// === АНИМАЦИИ ДЛЯ КНОПОК ===
+
+function animateButton(btn) {
+    if (!btn) return;
+    btn.classList.add("button-press");
+    setTimeout(() => {
+        btn.classList.remove("button-press");
+        btn.classList.add("button-release");
+        setTimeout(() => btn.classList.remove("button-release"), 120);
+    }, 80);
+}
+
+// === ВСПЛЫВАЮЩИЙ ТЕКСТ (+$) ===
+
+function spawnFloatingText(text, x, y) {
+    const el = document.createElement("div");
+    el.className = "floating-text";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.textContent = text;
+
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 900);
+}
