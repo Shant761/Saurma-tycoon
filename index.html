@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shaurma Tycoon</title>
 
-    <!-- ПОДКЛЮЧЕНИЕ CSS -->
+    <!-- СТИЛИ ИГРЫ -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,8 +13,9 @@
 <div id="app">
   <div class="game-screen">
 
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <header class="top-bar">
-      <button class="icon-button menu-button">☰</button>
+      <button id="btnMenu" class="icon-button menu-button">☰</button>
 
       <div class="top-bar-group">
         <div class="hud-card currency">
@@ -41,10 +42,12 @@
       </div>
     </header>
 
+    <!-- ОСНОВНОЙ ЛЕЙАУТ -->
     <div class="main-layout">
 
+      <!-- ЛЕВАЯ КОЛОНКА -->
       <aside class="side-column left-column">
-        <button class="side-card">
+        <button id="btnShop" class="side-card">
           <div class="side-icon">🏪</div>
           <div class="side-text">
             <span class="side-title">Магазин</span>
@@ -52,7 +55,7 @@
           </div>
         </button>
 
-        <button class="side-card">
+        <button id="btnSuppliers" class="side-card">
           <div class="side-icon">📦</div>
           <div class="side-text">
             <span class="side-title">Поставки</span>
@@ -60,7 +63,7 @@
           </div>
         </button>
 
-        <button class="side-card">
+        <button id="btnQuests" class="side-card">
           <div class="side-icon">📋</div>
           <div class="side-text">
             <span class="side-title">Квесты</span>
@@ -69,6 +72,7 @@
         </button>
       </aside>
 
+      <!-- ЦЕНТРАЛЬНАЯ СЦЕНА -->
       <main class="scene">
         <div class="scene-bg">
           <div class="kebab-shop">
@@ -82,12 +86,12 @@
           <div class="scene-progress">
             <span class="progress-label">Очередь клиентов</span>
             <div class="progress-bar">
-              <div class="progress-fill" style="width: 45%;"></div>
+              <div id="queueFill" class="progress-fill" style="width: 45%;"></div>
             </div>
-            <span class="progress-value">5 / 11</span>
+            <span id="queueValue" class="progress-value">5 / 11</span>
           </div>
 
-          <div class="piggy-card">
+          <div class="piggy-card" id="btnPiggy">
             <span class="piggy-text">КОПИЛКА ПОЛНА!</span>
             <span class="piggy-sub">Нажми, чтобы забрать</span>
             <div class="piggy-icon">🐷</div>
@@ -95,8 +99,9 @@
         </div>
       </main>
 
+      <!-- ПРАВАЯ КОЛОНКА -->
       <aside class="side-column right-column">
-        <button class="side-card offer">
+        <button id="btnOffer1" class="side-card offer">
           <div class="side-icon">🔥</div>
           <div class="side-text">
             <span class="side-title">Оффер</span>
@@ -104,7 +109,7 @@
           </div>
         </button>
 
-        <button class="side-card offer">
+        <button id="btnOffer2" class="side-card offer">
           <div class="side-icon">🥙</div>
           <div class="side-text">
             <span class="side-title">Шаурма дня</span>
@@ -112,7 +117,7 @@
           </div>
         </button>
 
-        <button class="side-card offer">
+        <button id="btnBoost" class="side-card offer">
           <div class="side-icon">⏱</div>
           <div class="side-text">
             <span class="side-title">Буст</span>
@@ -123,6 +128,7 @@
 
     </div>
 
+    <!-- НИЖНЯЯ ПАНЕЛЬ -->
     <footer class="bottom-bar">
       <div class="bottom-top">
         <div class="event-banner">
@@ -137,8 +143,8 @@
           <span class="main-button-sub">удерживай для авто-готовки</span>
         </button>
 
-        <div class="multiplier-pill">
-          <span>x3</span>
+        <div class="multiplier-pill" id="boostIndicator">
+          <span id="boostLabel">x1</span>
         </div>
       </div>
 
@@ -146,31 +152,30 @@
         <div class="energy-bar">
           <span>⚡</span>
           <div class="energy-track">
-            <div class="energy-fill"></div>
+            <div id="energyFill" class="energy-fill" style="width: 100%;"></div>
           </div>
-          <span class="energy-text">50/50</span>
+          <span id="energyText" class="energy-text">50/50</span>
         </div>
       </div>
 
       <div class="bottom-menu">
-        <button class="nav-icon">🏪</button>
-        <button class="nav-icon">❤️</button>
-        <button class="nav-icon active">🏠</button>
-        <button class="nav-icon">👥</button>
-        <button class="nav-icon">🏆</button>
+        <button id="btnShopBottom" class="nav-icon">🏪</button>
+        <button id="btnHearts" class="nav-icon">❤️</button>
+        <button id="btnHome" class="nav-icon active">🏠</button>
+        <button id="btnFriends" class="nav-icon">👥</button>
+        <button id="btnTrophy" class="nav-icon">🏆</button>
       </div>
     </footer>
 
+    <!-- ЛОГ ДЕЙСТВИЙ -->
     <div class="log-panel">
-      <ul id="logList">
-      </ul>
+      <ul id="logList"></ul>
     </div>
 
   </div>
 </div>
 
-<!-- ПОДКЛЮЧЕНИЕ JS -->
+<!-- СКРИПТ ИГРЫ -->
 <script src="js/game.js"></script>
-
 </body>
 </html>
