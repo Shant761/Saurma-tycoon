@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateMoneyView();
         updateEnergyView();
         renderUpgrades();
-        checkCurrentLevelGoal("upgrade");
+        checkCurrentLevelGoal();
     }
 
     function renderUpgrades() {
@@ -216,21 +216,23 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let key in state.upgrades) {
             const up = state.upgrades[key];
             const cost = getUpgradeCost(up);
-            const item = document.createElement("div");
-            item.className = "upgrade-item";
 
-            item.innerHTML = `
+            const div = document.createElement("div");
+            div.className = "upgrade-item";
+
+            div.innerHTML = `
                 <div class="upgrade-icon">${up.icon}</div>
                 <div class="upgrade-body">
                     <div class="upgrade-name">${up.name}</div>
                     <div class="upgrade-level">Уровень: ${up.level}</div>
                 </div>
-                <button class="upgrade-buy">${up.isItem && up.level > 0 ? "Куплено" : formatMoney(cost)}</button>
+                <button class="upgrade-buy">
+                    ${up.isItem && up.level > 0 ? "Куплено" : formatMoney(cost)}
+                </button>
             `;
 
-            item.querySelector(".upgrade-buy").onclick = () => buyUpgrade(key);
-
-            upgradeList.appendChild(item);
+            div.querySelector(".upgrade-buy").onclick = () => buyUpgrade(key);
+            upgradeList.appendChild(div);
         }
     }
 
@@ -255,17 +257,19 @@ document.addEventListener("DOMContentLoaded", () => {
     function startCurrentLevelGameplay() {
         const data = state.currentLevelData;
 
-        BlizzardTransition.play(() => {
-            applyLevelBackground(data);
-            Scenes.hideAll();
-            Scenes.show("game");
-        });
+        BlizzardTransition.play(
+            () => { applyLevelBackground(data); },
+            () => {
+                Scenes.hideAll();
+                Scenes.show("game");
+            }
+        );
     }
 
-    // ==========================
-    // 👉 ПРАВКА №1 — переход уровней
-    // ==========================
-    function checkCurrentLevelGoal(source) {
+    // =========================================================
+    // ПРОВЕРКА ЦЕЛИ УРОВНЯ
+    // =========================================================
+    function checkCurrentLevelGoal() {
         const data = state.currentLevelData;
         if (!data || state.levelCompleted) return;
 
@@ -275,36 +279,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================
-    // 👉 ПРАВКА №2 — САМАЯ ГЛАВНАЯ
-    // checkGoal работает по state.money
-    // ==========================
-    Levels.checkGoal = function (data, state) {
-        switch (data.type) {
-
-            case "money":
-                return state.money >= data.goal;
-
-            case "item":
-                return state.unlockedItems.includes(data.goal);
-
-            case "season_complete":
-                return true;
-
-            default:
-                return false;
-        }
-    };
-
-    // ==========================
-    // обработка завершения
-    // ==========================
+    // =========================================================
+    // ЗАВЕРШЕНИЕ УРОВНЯ
+    // =========================================================
     function handleLevelComplete() {
         if (state.levelCompleted) return;
         state.levelCompleted = true;
 
         const data = state.currentLevelData;
 
+        // НАГРАДА
         if (data.reward) {
             state.money += data.reward;
             updateMoneyView();
@@ -312,17 +296,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const next = Levels.next(data.number);
 
+        // Финал сезона
         if (!next) {
             Scenes.hideAll();
             Scenes.show("seasonEnd");
             return;
         }
 
-        BlizzardTransition.play(() => {
-            showLevelIntro(next);
-        });
+        // Красивый переход
+        BlizzardTransition.play(
+            null,
+            () => showLevelIntro(next)
+        );
     }
-
 
     // =========================================================
     // КВЕСТЫ
@@ -351,7 +337,9 @@ document.addEventListener("DOMContentLoaded", () => {
             let extra = "";
 
             if (lvl === 2 && lvl === state.season.level && !state.levelCompleted) {
-                extra = `<button class="quest-button" data-action="pay">Отдать долг (${formatMoney(data.goal)})</button>`;
+                extra = `<button class="quest-button" data-action="pay">
+                            Отдать долг (${formatMoney(data.goal)})
+                         </button>`;
             }
 
             div.innerHTML = `
@@ -398,9 +386,9 @@ document.addEventListener("DOMContentLoaded", () => {
         updateMoneyView();
         updateEnergyView();
 
-        spawnFloatingText(`+${formatMoney(inc)}`, e.clientX, e.clientY - 20);
+        spawnFloatingText(`+${inc}`, e.clientX, e.clientY - 20);
 
-        checkCurrentLevelGoal("cook");
+        checkCurrentLevelGoal();
     };
 
     // =========================================================
