@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // =========================================================
-    // DOM-ЭЛЕМЕНТЫ
+    // DOM-ЭЛЕМЕНТЫ (Только то, что нужно логике)
     // =========================================================
     const moneyValueEl = document.getElementById("moneyValue");
     const energyValueEl = document.getElementById("energyValue");
@@ -73,23 +73,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const energyFillEl = document.getElementById("energyFill");
     const queueFillEl = document.getElementById("queueFill");
     const queueValueEl = document.getElementById("queueValue");
-    const cookButton = document.getElementById("cookButton");
     const boostLabelEl = document.getElementById("boostLabel");
     const boostIndicator = document.getElementById("boostIndicator");
     const logList = document.getElementById("logList");
 
     const shopPopup = document.getElementById("shopPopup");
     const upgradeList = document.getElementById("upgradeList");
-    const closeShopBtn = document.getElementById("closeShop");
 
-    const btnShop = document.getElementById("btnShop");
-    const btnQuests = document.getElementById("btnQuests");
     const questsPopup = document.getElementById("questsPopup");
     const questsList = document.getElementById("questsList");
-    const closeQuestsBtn = document.getElementById("closeQuests");
-
-    const startSeasonBtn = document.getElementById("startSeasonBtn");
-    const startLevelBtn = document.getElementById("startLevelBtn");
 
     const snowContainer = document.getElementById("snowContainer");
     const gameScreenEl = document.getElementById("gameScreen");
@@ -134,14 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================================================
-    // АНИМАЦИИ
+    // АНИМАЦИИ ТЕКСТА
     // =========================================================
-    function animateButton(btn) {
-        if (!btn) return;
-        btn.classList.add("button-press");
-        setTimeout(() => btn.classList.remove("button-press"), 120);
-    }
-
     function spawnFloatingText(text, x, y) {
         const el = document.createElement("div");
         el.className = "floating-text";
@@ -202,9 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
             clearInterval(state.autoCookTimerId);
         }
 
-        // Базовый интервал, можно в будущем ускорять от уровня
         state.autoCookTimerId = setInterval(() => {
-            // Авто-повар кликает без анимации и текста
+            // Авто-повар без анимации
             handleCook();
         }, 1000);
     }
@@ -286,12 +271,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
     // УРОВНИ
     // =========================================================
-
     function setCurrentLevel(lvl) {
         const data = Levels.get(lvl);
         state.currentLevelData = data;
         state.season.level = lvl;
         state.levelCompleted = false;
+        // можно обнулять статистику дохода по уровню:
+        state.stats.totalEarned = 0;
         return data;
     }
 
@@ -335,7 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = state.currentLevelData;
 
-        // НАГРАДА
         if (data.reward) {
             state.money += data.reward;
             updateMoneyView();
@@ -343,14 +328,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const next = Levels.next(data.number);
 
-        // Финал сезона
         if (!next) {
             Scenes.hideAll();
             Scenes.show("seasonEnd");
             return;
         }
 
-        // Красивый переход
         BlizzardTransition.play(
             null,
             () => showLevelIntro(next)
@@ -368,7 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
         addLog("Долг погашен!");
 
         questsPopup.classList.add("hidden");
-
         handleLevelComplete();
     }
 
@@ -410,15 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ОТКРЫТИЕ / ЗАКРЫТИЕ КВЕСТОВ
-    btnQuests.onclick = () => {
-        animateButton(btnQuests);
-        renderQuests();
-        questsPopup.classList.remove("hidden");
-    };
-
-    closeQuestsBtn.onclick = () => questsPopup.classList.add("hidden");
-
     // =========================================================
     // ГОТОВКА
     // =========================================================
@@ -448,33 +421,9 @@ document.addEventListener("DOMContentLoaded", () => {
         checkCurrentLevelGoal();
     }
 
-    cookButton.onclick = (e) => {
-        handleCook(e.clientX, e.clientY);
-    };
-
-    // =========================================================
-    // КНОПКИ МАГАЗИНА
-    // =========================================================
-    btnShop.onclick = () => {
-        animateButton(btnShop);
-        renderUpgrades();
-        shopPopup.classList.remove("hidden");
-    };
-
-    closeShopBtn.onclick = () => {
-        shopPopup.classList.add("hidden");
-    };
-
-    // =========================================================
-    // СЦЕНЫ
-    // =========================================================
-    startSeasonBtn.onclick = () => showLevelIntro(1);
-    startLevelBtn.onclick = () => startCurrentLevelGameplay();
-
     // =========================================================
     // ПАССИВНАЯ РЕГЕНЕРАЦИЯ
     // =========================================================
-    // Энергия восстанавливается понемногу
     setInterval(() => {
         if (state.energy < state.energyMax) {
             state.energy++;
@@ -482,7 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 2000);
 
-    // Очередь клиентов пополняется со временем
     setInterval(() => {
         if (state.queueCurrent < state.queueMax) {
             state.queueCurrent++;
@@ -499,6 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQueueView();
         updateBoostView();
         renderUpgrades();
+
         Scenes.hideAll();
         Scenes.show("loading");
 
@@ -507,6 +456,33 @@ document.addEventListener("DOMContentLoaded", () => {
             Scenes.show("seasonIntro");
         }, 900);
     }
+
+    // =========================================================
+    // ЭКСПОРТ В ГЛОБАЛЬНЫЙ ОБЪЕКТ Game ДЛЯ ui.js
+    // =========================================================
+    window.Game = {
+        state,
+        addLog,
+        formatMoney,
+        updateMoneyView,
+        updateEnergyView,
+        updateQueueView,
+        updateBoostView,
+        applyLevelBackground,
+        activateBoost,
+        getUpgradeCost,
+        startAutoCook,
+        buyUpgrade,
+        renderUpgrades,
+        setCurrentLevel,
+        showLevelIntro,
+        startCurrentLevelGameplay,
+        checkCurrentLevelGoal,
+        handleLevelComplete,
+        handlePayDebt,
+        renderQuests,
+        handleCook
+    };
 
     init();
 });
