@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <title>Shaurma Tycoon</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-
 <div id="app">
 
     <!-- ============================= -->
-    <!-- LOADING SCREEN -->
+    <!-- 1. LOADING SCREEN             -->
     <!-- ============================= -->
     <div id="loadingScreen" class="screen screen-loading">
         <div class="loading-content">
@@ -23,32 +25,41 @@
     </div>
 
     <!-- ============================= -->
-    <!-- SEASON INTRO -->
+    <!-- 2. SEASON INTRO SCREEN        -->
     <!-- ============================= -->
     <div id="seasonIntroScreen" class="screen screen-intro hidden">
         <div class="intro-content">
             <h2 class="intro-title">Сезон 1</h2>
-            <p class="intro-subtitle">"Голодный Повар"</p>
-            <p class="intro-desc">Зима. Дом разрушен. Герой мёрзнет. Построй свою шаурменную империю!</p>
+            <p class="intro-subtitle">«Голодный Повар»</p>
+            <p class="intro-desc">
+                Зима. Дом разрушен. Герой мёрзнет.<br>
+                Помоги ему выжить и построить свою шаурменную империю!
+            </p>
 
-            <button id="startSeasonBtn" class="intro-button">Начать сезон</button>
+            <button id="startSeasonBtn" class="intro-button">
+                Начать сезон
+            </button>
         </div>
     </div>
 
     <!-- ============================= -->
-    <!-- LEVEL INTRO -->
+    <!-- 3. LEVEL INTRO SCREEN         -->
     <!-- ============================= -->
     <div id="levelIntroScreen" class="screen screen-intro hidden">
         <div class="intro-content">
             <h2 id="levelIntroTitle" class="intro-title">Уровень 1</h2>
-            <p id="levelIntroGoal" class="intro-desc">Цель уровня</p>
+            <p id="levelIntroGoal" class="intro-desc">
+                Собрать 5 000 ֏ чтобы не умереть
+            </p>
 
-            <button id="startLevelBtn" class="intro-button">Начать уровень</button>
+            <button id="startLevelBtn" class="intro-button">
+                Начать уровень
+            </button>
         </div>
     </div>
 
     <!-- ============================= -->
-    <!-- GAME SCREEN -->
+    <!-- 4. MAIN GAME SCREEN           -->
     <!-- ============================= -->
     <div id="gameScreen" class="game-screen hidden">
 
@@ -60,16 +71,16 @@
 
         <div class="game-content">
 
-            <!-- TOP BAR -->
+            <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
             <header class="top-bar">
-                <button id="btnMenu" class="icon-button">☰</button>
+                <button id="btnMenu" class="icon-button menu-button">☰</button>
 
                 <div class="top-bar-group">
                     <div class="hud-card currency">
                         <div class="hud-icon">🧆</div>
                         <div class="hud-text">
                             <span class="hud-label">Деньги</span>
-                            <span id="moneyValue">0</span>
+                            <span id="moneyValue" class="hud-value">0 ֏</span>
                         </div>
                         <button class="hud-plus">+</button>
                     </div>
@@ -78,7 +89,7 @@
                         <div class="hud-icon">⚡</div>
                         <div class="hud-text">
                             <span class="hud-label">Энергия</span>
-                            <span id="energyValue">50/50</span>
+                            <span id="energyValue" class="hud-value">50/50</span>
                         </div>
                     </div>
                 </div>
@@ -89,12 +100,11 @@
                 </div>
             </header>
 
-            <!-- MAIN LAYOUT -->
+            <!-- ОСНОВНОЙ ЛЕЙАУТ -->
             <div class="main-layout">
 
-                <!-- LEFT COLUMN -->
+                <!-- ЛЕВАЯ КОЛОНКА -->
                 <aside class="side-column left-column">
-
                     <button id="btnShop" class="side-card">
                         <div class="side-icon">🏪</div>
                         <div class="side-text">
@@ -119,7 +129,7 @@
                         </div>
                     </button>
 
-                    <!-- FIXED MINI PIGGY BANK -->
+                    <!-- МИНИ-КОПИЛКА ПОД КВЕСТАМИ -->
                     <div id="btnPiggy" class="piggy-small">
                         <div class="piggy-icon">🐷</div>
                         <div class="piggy-info">
@@ -129,22 +139,19 @@
                     </div>
                 </aside>
 
-                <!-- CENTER -->
+                <!-- ЦЕНТРАЛЬНАЯ ОБЛАСТЬ -->
                 <main class="scene">
                     <div class="scene-progress">
                         <span class="progress-label">Очередь клиентов</span>
-
                         <div class="progress-bar">
                             <div id="queueFill" class="progress-fill"></div>
                         </div>
-
                         <span id="queueValue" class="progress-value">5 / 11</span>
                     </div>
                 </main>
 
-                <!-- RIGHT COLUMN -->
+                <!-- ПРАВАЯ КОЛОНКА -->
                 <aside class="side-column right-column">
-
                     <button id="btnOffer1" class="side-card offer">
                         <div class="side-icon">🔥</div>
                         <div class="side-text">
@@ -168,12 +175,11 @@
                             <span class="side-sub">x3 доход</span>
                         </div>
                     </button>
-
                 </aside>
 
             </div>
 
-            <!-- BOTTOM BAR -->
+            <!-- НИЖНЯЯ ПАНЕЛЬ -->
             <footer class="bottom-bar">
 
                 <div class="bottom-top">
@@ -189,7 +195,7 @@
                         <span class="main-button-sub">удерживай для авто-готовки</span>
                     </button>
 
-                    <div id="boostIndicator" class="multiplier-pill">
+                    <div class="multiplier-pill" id="boostIndicator">
                         <span id="boostLabel">x1</span>
                     </div>
                 </div>
@@ -206,15 +212,14 @@
 
                 <div class="bottom-menu">
                     <button id="btnShopBottom" class="nav-icon">🏪</button>
-                    <button class="nav-icon">❤️</button>
+                    <button id="btnHearts" class="nav-icon">❤️</button>
                     <button id="btnHome" class="nav-icon active">🏠</button>
-                    <button class="nav-icon">👥</button>
-                    <button class="nav-icon">🏆</button>
+                    <button id="btnFriends" class="nav-icon">👥</button>
+                    <button id="btnTrophy" class="nav-icon">🏆</button>
                 </div>
-
             </footer>
 
-            <!-- LOG -->
+            <!-- ЛОГ -->
             <div class="log-panel">
                 <ul id="logList"></ul>
             </div>
@@ -223,22 +228,24 @@
     </div>
 
     <!-- ============================= -->
-    <!-- SEASON END -->
+    <!-- 5. SEASON END SCREEN          -->
     <!-- ============================= -->
     <div id="seasonEndScreen" class="screen screen-end hidden">
         <div class="end-content">
             <h2>Сезон завершён!</h2>
-            <p class="end-desc">Ты выжил, построил мангал, купил генератор и готов открыть шаурмячную мечты!</p>
+            <p class="end-desc">
+                Ты выжил, построил мангал, купил генератор и готов открыть шаурмячную мечты!
+            </p>
             <button class="intro-button">Продолжить</button>
         </div>
     </div>
 
-    <!-- BLIZZARD -->
+    <!-- МЕТЕЛЬ -->
     <div id="blizzardOverlay"></div>
 
 </div>
 
-<!-- POPUP SHOP -->
+<!-- POPUP МАГАЗИНА -->
 <div id="shopPopup" class="popup hidden">
     <div class="popup-bg"></div>
     <div class="popup-window">
@@ -248,17 +255,17 @@
     </div>
 </div>
 
-<!-- POPUP QUESTS -->
+<!-- POPUP КВЕСТОВ -->
 <div id="questsPopup" class="popup hidden">
     <div class="popup-bg"></div>
     <div class="popup-window">
         <h2 class="popup-title">Задачи сезона</h2>
-        <div id="questsList"></div>
+        <div id="questsList" class="quests-list"></div>
         <button id="closeQuests" class="popup-close">Закрыть</button>
     </div>
 </div>
 
-<!-- JS -->
+<!-- СКРИПТЫ -->
 <script src="js/levels.js"></script>
 <script src="js/scenes.js"></script>
 <script src="js/transition.js"></script>
