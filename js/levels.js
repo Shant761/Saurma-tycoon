@@ -1,12 +1,5 @@
-// ====================================================================
-//  levels.js — структура уровней сезона 1
-// ====================================================================
-
 const Levels = (() => {
 
-    // ---------------------------------------------
-    // СОЗДАЁМ ДАННЫЕ ВСЕХ 7 УРОВНЕЙ СЕЗОНА 1
-    // ---------------------------------------------
     const data = {
 
         1: {
@@ -20,7 +13,8 @@ const Levels = (() => {
 
         2: {
             number: 2,
-            type: "money",
+            type: "action",
+            actionId: "pay_debt",
             goal: 10000,
             description: "Отдать долги 10 000 ֏",
             reward: 1500,
@@ -63,7 +57,6 @@ const Levels = (() => {
             background: "img/season1_level6.png"
         },
 
-        // Финальный уровень
         7: {
             number: 7,
             type: "season_complete",
@@ -74,32 +67,18 @@ const Levels = (() => {
         }
     };
 
-    // ---------------------------------------------
-    // API
-    // ---------------------------------------------
-
-    /** Получить данные уровня */
     function get(levelNumber) {
         return data[levelNumber] || null;
     }
 
-    /** Следующий уровень */
     function next(levelNumber) {
         return data[levelNumber + 1] ? levelNumber + 1 : null;
     }
 
-    /** Проверка, последний ли уровень */
     function isLast(levelNumber) {
         return levelNumber === 7;
     }
 
-    /**
-     * Проверка выполнения цели уровня
-     * goalTypes:
-     *   - money
-     *   - item
-     *   - season_complete
-     */
     function checkGoal(levelData, state) {
         if (!levelData) return false;
 
@@ -109,8 +88,10 @@ const Levels = (() => {
                 return state.stats.totalEarned >= levelData.goal;
 
             case "item":
-                // Если игрок купил предмет (например "item_mangal") → true
                 return state.unlockedItems?.includes(levelData.goal);
+
+            case "action":
+                return state.unlockedActions?.includes(levelData.actionId);
 
             case "season_complete":
                 return true;
