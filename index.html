@@ -61,13 +61,13 @@
     <!-- ============================= -->
     <div id="gameScreen" class="game-screen hidden">
 
-        <!-- Герой (анимации будем делать дальше) -->
+        <!-- Герой -->
         <div id="hero"></div>
 
         <!-- Фоновый снег -->
         <div id="snowContainer"></div>
 
-        <!-- ===== ВСЯ ТВОЯ ТЕКУЩАЯ ИГРОВАЯ РАЗМЕТКА ===== -->
+        <!-- ===== ВСЯ ИГРОВАЯ РАЗМЕТКА ===== -->
         <div class="game-content">
 
             <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
@@ -237,11 +237,30 @@
 
 
     <!-- ====================================== -->
-    <!--       6. BLIZZARD TRANSITION OVERLAY    -->
+    <!-- 6. BLIZZARD TRANSITION OVERLAY -->
     <!-- ====================================== -->
     <div id="blizzardOverlay"></div>
 
+</div> <!-- end #app -->
+
+
+
+<!-- ====================================================== -->
+<!--            ВОССТАНОВЛЕННЫЙ POPUP МАГАЗИНА              -->
+<!-- ====================================================== -->
+
+<div id="shopPopup" class="popup hidden">
+    <div class="popup-bg"></div>
+
+    <div class="popup-window">
+        <h2 class="popup-title">Улучшения</h2>
+
+        <div id="upgradeList" class="upgrade-list"></div>
+
+        <button id="closeShop" class="popup-close">Закрыть</button>
+    </div>
 </div>
+
 
 
 <!-- СЦЕНАРИИ -->
