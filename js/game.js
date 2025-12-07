@@ -131,6 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const startSeasonBtn = document.getElementById("startSeasonBtn");
     const startLevelBtn  = document.getElementById("startLevelBtn");
 
+    // POPUP КВЕСТОВ
+    const questsPopup    = document.getElementById("questsPopup");
+    const questsList     = document.getElementById("questsList");
+    const closeQuestsBtn = document.getElementById("closeQuests");
 
     // =========================================================
     // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ UI
@@ -401,7 +405,6 @@ document.addEventListener("DOMContentLoaded", () => {
             BlizzardTransition.play(
                 () => {
                     Scenes.hideAll();
-                    // можно потом сюда добавить отдельный текст финала
                     Scenes.show("seasonEnd");
                 }
             );
@@ -436,9 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
             addLog(`Награда за уровень: +${formatMoney(levelData.reward)}`);
         }
 
-        // если это был последний уровень (6-й с геймплеем → затем 7-й финальный)
+        // если это был последний уровень (7)
         if (Levels.isLast(levelData.number)) {
-            // теоретически сюда не попадем, сезон заканчиваем через level 7 type season_complete
             BlizzardTransition.play(
                 () => {
                     Scenes.hideAll();
@@ -472,6 +474,93 @@ document.addEventListener("DOMContentLoaded", () => {
             addLog(`Цель уровня достигнута (${triggerSource})`);
             handleLevelComplete();
         }
+    }
+
+    // =========================================================
+    // КВЕСТЫ / СПИСОК УРОВНЕЙ СЕЗОНА
+    // =========================================================
+
+    function handlePayDebt(levelData) {
+        if (!levelData) return;
+
+        // Берём сумму долга из goal, если это число
+        let required = 0;
+        if (typeof levelData.goal === "number") {
+            required = levelData.goal;
+        } else {
+            required = 10000; // запасной вариант
+        }
+
+        if (state.money < required) {
+            addLog("Недостаточно денег, чтобы отдать долг!");
+            return;
+        }
+
+        state.money -= required;
+        updateMoneyView();
+        addLog(`Ты отдал долг на сумму ${formatMoney(required)}!`);
+
+        // закрываем окно квестов
+        if (questsPopup) {
+            questsPopup.classList.add("hidden");
+        }
+
+        // завершаем уровень (флаг levelCompleted защитит от повторного вызова)
+        handleLevelComplete();
+    }
+
+    function renderQuests() {
+        if (!questsList) return;
+        questsList.innerHTML = "";
+
+        for (let lvl = 1; lvl <= state.season.maxLevel; lvl++) {
+            const levelData = Levels.get(lvl);
+            if (!levelData) continue;
+
+            const item = document.createElement("div");
+            item.className = "quest-item";
+
+            let statusText = "";
+            let actionHtml = "";
+
+            if (lvl < state.season.level) {
+                statusText = "✔ Выполнено";
+            } else if (lvl === state.season.level) {
+                statusText = state.levelCompleted
+                    ? "✔ Выполнено (ожидает перехода)"
+                    : "🔓 Текущий уровень";
+
+                // Показываем кнопку "Отдать долг" ТОЛЬКО на уровне 2, если он текущий
+                if (!state.levelCompleted && lvl === 2) {
+                    const debtAmount = typeof levelData.goal === "number"
+                        ? formatMoney(levelData.goal)
+                        : "долг";
+                    actionHtml = `<button class="quest-button" data-action="pay_debt">Отдать долг ${debtAmount}</button>`;
+                }
+            } else {
+                statusText = "🔒 Недоступно";
+            }
+
+            item.innerHTML = `
+                <div class="quest-title">Уровень ${lvl}</div>
+                <div class="quest-desc">${levelData.description}</div>
+                <div class="quest-status">${statusText}</div>
+                ${actionHtml}
+            `;
+
+            questsList.appendChild(item);
+        }
+
+        // Навешиваем обработчики на кнопки квестов
+        questsList.querySelectorAll(".quest-button").forEach(btn => {
+            const action = btn.dataset.action;
+            if (action === "pay_debt") {
+                btn.addEventListener("click", () => {
+                    const levelData = state.currentLevelData || Levels.get(state.season.level);
+                    handlePayDebt(levelData);
+                });
+            }
+        });
     }
 
     // =========================================================
@@ -512,11 +601,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================================================
-    // ПРОЧИЕ КНОПКИ (пока простые логи)
+    // ПРОЧИЕ КНОПКИ
     // =========================================================
     if (btnSuppliers) btnSuppliers.addEventListener("click", () => addLog("Поставщики (в разработке)"));
-    if (btnQuests)    btnQuests.addEventListener("click",    () => addLog("Квесты (в разработке)"));
-    if (btnOffer1)    btnOffer1.addEventListener("click",    () => addLog("Оффер 1"));
+
+    if (btnQuests) {
+        btnQuests.addEventListener("click", () => {
+            animateButton(btnQuests);
+            if (!questsPopup) {
+                addLog("Квесты (в разработке)");
+                return;
+            }
+            renderQuests();
+            questsPopup.classList.remove("hidden");
+        });
+    }
+
+    if (closeQuestsBtn && questsPopup) {
+        closeQuestsBtn.addEventListener("click", () => {
+            questsPopup.classList.add("hidden");
+        });
+    }
+
+    if (btnOffer1) btnOffer1.addEventListener("click", () => addLog("Оффер 1"));
 
     if (btnOffer2) {
         btnOffer2.addEventListener("click", () => {
