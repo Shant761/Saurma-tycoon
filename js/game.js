@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         boostMultiplier: 1,
         boostActive: false,
         boostTimerId: null,
+        autoCookTimerId: null,
 
         stats: {
             shawarmasSold: 0,
@@ -31,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
         levelCompleted: false,
 
         upgrades: {
-            clickIncome: { level: 1, baseCost: 50, icon: "💰", name: "Доход за клик" },
-            autoCook:   { level: 0, baseCost: 120, icon: "🤖", name: "Авто-повар (позже)" },
+            clickIncome: { level: 1, baseCost: 50,  icon: "💰", name: "Доход за клик" },
+            autoCook:   { level: 0, baseCost: 120, icon: "🤖", name: "Авто-повар" },
             energyMax:  { level: 0, baseCost: 90,  icon: "⚡", name: "Макс. энергия" },
             queueSize:  { level: 0, baseCost: 70,  icon: "🚶", name: "Очередь клиентов" },
 
@@ -136,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // АНИМАЦИИ
     // =========================================================
     function animateButton(btn) {
+        if (!btn) return;
         btn.classList.add("button-press");
         setTimeout(() => btn.classList.remove("button-press"), 120);
     }
@@ -173,10 +175,18 @@ document.addEventListener("DOMContentLoaded", () => {
         state.boostMultiplier = mult;
         updateBoostView();
 
-        setTimeout(() => {
+        if (boostIndicator) {
+            boostIndicator.classList.add("active");
+        }
+
+        clearTimeout(state.boostTimerId);
+        state.boostTimerId = setTimeout(() => {
             state.boostActive = false;
             state.boostMultiplier = 1;
             updateBoostView();
+            if (boostIndicator) {
+                boostIndicator.classList.remove("active");
+            }
         }, dur);
     }
 
@@ -187,26 +197,57 @@ document.addEventListener("DOMContentLoaded", () => {
         return Math.floor(up.baseCost * Math.pow(1.25, up.level));
     }
 
+    function startAutoCook() {
+        if (state.autoCookTimerId) {
+            clearInterval(state.autoCookTimerId);
+        }
+
+        // Базовый интервал, можно в будущем ускорять от уровня
+        state.autoCookTimerId = setInterval(() => {
+            // Авто-повар кликает без анимации и текста
+            handleCook();
+        }, 1000);
+    }
+
     function buyUpgrade(key) {
         const up = state.upgrades[key];
         const cost = getUpgradeCost(up);
 
-        if (state.money < cost) return addLog("Недостаточно денег!");
+        if (state.money < cost) {
+            return addLog("Недостаточно денег!");
+        }
 
         state.money -= cost;
         up.level++;
 
-        if (key === "clickIncome") state.incomePerClick += 2;
-        if (key === "energyMax") { state.energyMax += 5; state.energy = state.energyMax; }
-        if (key === "queueSize") state.queueMax += 2;
+        if (key === "clickIncome") {
+            state.incomePerClick += 2;
+        }
+
+        if (key === "energyMax") {
+            state.energyMax += 5;
+            state.energy = state.energyMax;
+        }
+
+        if (key === "queueSize") {
+            state.queueMax += 2;
+        }
+
+        if (key === "autoCook" && up.level === 1) {
+            startAutoCook();
+            addLog("Авто-повар вышел на смену!");
+        }
 
         if (up.isItem) {
-            state.unlockedItems.push(up.itemKey);
+            if (!state.unlockedItems.includes(up.itemKey)) {
+                state.unlockedItems.push(up.itemKey);
+            }
             addLog(`Получен предмет: ${up.name}`);
         }
 
         updateMoneyView();
         updateEnergyView();
+        updateQueueView();
         renderUpgrades();
         checkCurrentLevelGoal();
     }
@@ -220,18 +261,24 @@ document.addEventListener("DOMContentLoaded", () => {
             const div = document.createElement("div");
             div.className = "upgrade-item";
 
+            const isBoughtItem = up.isItem && up.level > 0;
+
             div.innerHTML = `
                 <div class="upgrade-icon">${up.icon}</div>
                 <div class="upgrade-body">
                     <div class="upgrade-name">${up.name}</div>
                     <div class="upgrade-level">Уровень: ${up.level}</div>
                 </div>
-                <button class="upgrade-buy">
-                    ${up.isItem && up.level > 0 ? "Куплено" : formatMoney(cost)}
+                <button class="upgrade-buy" ${isBoughtItem ? "disabled" : ""}>
+                    ${isBoughtItem ? "Куплено" : formatMoney(cost)}
                 </button>
             `;
 
-            div.querySelector(".upgrade-buy").onclick = () => buyUpgrade(key);
+            const btn = div.querySelector(".upgrade-buy");
+            btn.onclick = () => {
+                if (!isBoughtItem) buyUpgrade(key);
+            };
+
             upgradeList.appendChild(div);
         }
     }
@@ -363,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ОТКРЫТИЕ / ЗАКРЫТИЕ КВЕСТОВ
     btnQuests.onclick = () => {
         animateButton(btnQuests);
         renderQuests();
@@ -372,23 +420,49 @@ document.addEventListener("DOMContentLoaded", () => {
     closeQuestsBtn.onclick = () => questsPopup.classList.add("hidden");
 
     // =========================================================
-    // КНОПКА ГОТОВКИ
+    // ГОТОВКА
     // =========================================================
-    cookButton.onclick = (e) => {
+    function handleCook(x, y) {
         if (state.energy <= 0) return;
+        if (state.queueCurrent <= 0) {
+            addLog("Клиенты кончились, подожди новых!");
+            return;
+        }
 
         const inc = state.incomePerClick * state.boostMultiplier;
 
         state.money += inc;
         state.energy--;
+        state.queueCurrent--;
         state.stats.totalEarned += inc;
+        state.stats.shawarmasSold++;
 
         updateMoneyView();
         updateEnergyView();
+        updateQueueView();
 
-        spawnFloatingText(`+${inc}`, e.clientX, e.clientY - 20);
+        if (typeof x === "number" && typeof y === "number") {
+            spawnFloatingText(`+${inc}`, x, y - 20);
+        }
 
         checkCurrentLevelGoal();
+    }
+
+    cookButton.onclick = (e) => {
+        handleCook(e.clientX, e.clientY);
+    };
+
+    // =========================================================
+    // КНОПКИ МАГАЗИНА
+    // =========================================================
+    btnShop.onclick = () => {
+        animateButton(btnShop);
+        renderUpgrades();
+        shopPopup.classList.remove("hidden");
+    };
+
+    closeShopBtn.onclick = () => {
+        shopPopup.classList.add("hidden");
     };
 
     // =========================================================
@@ -398,6 +472,25 @@ document.addEventListener("DOMContentLoaded", () => {
     startLevelBtn.onclick = () => startCurrentLevelGameplay();
 
     // =========================================================
+    // ПАССИВНАЯ РЕГЕНЕРАЦИЯ
+    // =========================================================
+    // Энергия восстанавливается понемногу
+    setInterval(() => {
+        if (state.energy < state.energyMax) {
+            state.energy++;
+            updateEnergyView();
+        }
+    }, 2000);
+
+    // Очередь клиентов пополняется со временем
+    setInterval(() => {
+        if (state.queueCurrent < state.queueMax) {
+            state.queueCurrent++;
+            updateQueueView();
+        }
+    }, 3000);
+
+    // =========================================================
     // ИНИЦИАЛИЗАЦИЯ
     // =========================================================
     function init() {
@@ -405,6 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateEnergyView();
         updateQueueView();
         updateBoostView();
+        renderUpgrades();
         Scenes.hideAll();
         Scenes.show("loading");
 
