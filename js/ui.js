@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
         addLog
     } = Game;
 
-
     // ================================
     // ПОЛУЧАЕМ ЭЛЕМЕНТЫ UI
     // ================================
@@ -42,16 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btnPiggy = document.getElementById("btnPiggy");
 
-
     // =========================================================
-    // АНИМАЦИЯ НАЖАТИЯ
+    // АНИМАЦИЯ НАЖАТИЯ (универсальная)
     // =========================================================
     function tap(btn) {
         if (!btn) return;
         btn.classList.add("button-press");
         setTimeout(() => btn.classList.remove("button-press"), 120);
     }
-
 
     // =========================================================
     // МАГАЗИН
@@ -70,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnShopBottom.onclick = openShop;
     closeShopBtn.onclick = closeShop;
 
-
     // =========================================================
     // КВЕСТЫ
     // =========================================================
@@ -84,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
         questsPopup.classList.add("hidden");
     };
 
-
     // =========================================================
     // БУСТ
     // =========================================================
@@ -92,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
         tap(btnBoost);
         activateBoost(3, 15000);
     };
-
 
     // =========================================================
     // ГОТОВКА
@@ -102,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
         handleCook(e.clientX, e.clientY);
     };
 
-
     // =========================================================
     // КОПИЛКА
     // =========================================================
@@ -111,9 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
         addLog("Ты забрал деньги из копилки! (механика появится позже)");
     };
 
-
     // =========================================================
-    // ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
+    // ЭКРАНЫ (переключение)
     // =========================================================
     startSeasonBtn.onclick = () => {
         tap(startSeasonBtn);
