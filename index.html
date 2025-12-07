@@ -64,7 +64,6 @@
         <!-- Фоновый снег -->
         <div id="snowContainer"></div>
 
-        <!-- ===== ВСЯ ИГРОВАЯ РАЗМЕТКА ===== -->
         <div class="game-content">
 
             <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
@@ -124,6 +123,15 @@
                             <span class="side-sub">3 задачи</span>
                         </div>
                     </button>
+
+                    <!-- МИНИ-КОПИЛКА -->
+                    <div id="btnPiggy" class="piggy-small">
+                        <div class="piggy-icon">🐷</div>
+                        <div class="piggy-info">
+                            <span class="piggy-title">Копилка полна!</span>
+                            <span class="piggy-sub">Забрать →</span>
+                        </div>
+                    </div>
                 </aside>
 
                 <!-- ЦЕНТР -->
@@ -134,12 +142,6 @@
                             <div id="queueFill" class="progress-fill"></div>
                         </div>
                         <span id="queueValue" class="progress-value">5 / 11</span>
-                    </div>
-
-                    <div class="piggy-card" id="btnPiggy">
-                        <span class="piggy-text">КОПИЛКА ПОЛНА!</span>
-                        <span class="piggy-sub">Нажми, чтобы забрать</span>
-                        <div class="piggy-icon">🐷</div>
                     </div>
                 </main>
 
@@ -157,7 +159,7 @@
                         <div class="side-icon">🥙</div>
                         <div class="side-text">
                             <span class="side-title">Шаурма дня</span>
-                            <span class="side-sub">новинка</span>
+                            <span class="side-sub">Новинка</span>
                         </div>
                     </button>
 
@@ -198,7 +200,7 @@
                         <div class="energy-track">
                             <div id="energyFill" class="energy-fill"></div>
                         </div>
-                        <span id="energyText" class="energy-text">50/50</span>
+                        <span id="energyText">50/50</span>
                     </div>
                 </div>
 
@@ -232,12 +234,10 @@
         </div>
     </div>
 
-    <!-- ====================================== -->
-    <!-- 6. BLIZZARD TRANSITION OVERLAY         -->
-    <!-- ====================================== -->
+    <!-- МЕТЕЛЬ -->
     <div id="blizzardOverlay"></div>
 
-</div> <!-- end #app -->
+</div>
 
 <!-- POPUP МАГАЗИНА -->
 <div id="shopPopup" class="popup hidden">
@@ -259,11 +259,12 @@
     </div>
 </div>
 
-<!-- СЦЕНАРИИ -->
+<!-- СКРИПТЫ -->
 <script src="js/levels.js"></script>
 <script src="js/scenes.js"></script>
 <script src="js/transition.js"></script>
 <script src="js/game.js"></script>
+<script src="js/ui.js"></script>
 
 </body>
 </html>
