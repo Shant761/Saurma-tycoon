@@ -477,37 +477,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================================================
-    // КВЕСТЫ / СПИСОК УРОВНЕЙ СЕЗОНА
+    // КВЕСТЫ / СПИСОК УРОВНЕЙ СЕЗОНА (без кнопки "Отдать долг")
     // =========================================================
-
-    function handlePayDebt(levelData) {
-        if (!levelData) return;
-
-        // Берём сумму долга из goal, если это число
-        let required = 0;
-        if (typeof levelData.goal === "number") {
-            required = levelData.goal;
-        } else {
-            required = 10000; // запасной вариант
-        }
-
-        if (state.money < required) {
-            addLog("Недостаточно денег, чтобы отдать долг!");
-            return;
-        }
-
-        state.money -= required;
-        updateMoneyView();
-        addLog(`Ты отдал долг на сумму ${formatMoney(required)}!`);
-
-        // закрываем окно квестов
-        if (questsPopup) {
-            questsPopup.classList.add("hidden");
-        }
-
-        // завершаем уровень (флаг levelCompleted защитит от повторного вызова)
-        handleLevelComplete();
-    }
 
     function renderQuests() {
         if (!questsList) return;
@@ -521,21 +492,24 @@ document.addEventListener("DOMContentLoaded", () => {
             item.className = "quest-item";
 
             let statusText = "";
-            let actionHtml = "";
 
             if (lvl < state.season.level) {
                 statusText = "✔ Выполнено";
             } else if (lvl === state.season.level) {
-                statusText = state.levelCompleted
-                    ? "✔ Выполнено (ожидает перехода)"
-                    : "🔓 Текущий уровень";
-
-                // Показываем кнопку "Отдать долг" ТОЛЬКО на уровне 2, если он текущий
-                if (!state.levelCompleted && lvl === 2) {
-                    const debtAmount = typeof levelData.goal === "number"
-                        ? formatMoney(levelData.goal)
-                        : "долг";
-                    actionHtml = `<button class="quest-button" data-action="pay_debt">Отдать долг ${debtAmount}</button>`;
+                if (state.levelCompleted) {
+                    statusText = "✔ Выполнено (ожидает перехода)";
+                } else {
+                    // Подсказка по текущему прогрессу (упрощённо)
+                    if (levelData.type === "money") {
+                        statusText = `🔓 Текущий уровень — прогресс: ${formatMoney(state.stats.totalEarned)} / ${formatMoney(levelData.goal)}`;
+                    } else if (levelData.type === "item") {
+                        const hasItem = state.unlockedItems.includes(levelData.goal);
+                        statusText = hasItem
+                            ? "Предмет уже куплен, скоро переход"
+                            : "Купи нужный предмет в магазине";
+                    } else {
+                        statusText = "🔓 Текущий уровень";
+                    }
                 }
             } else {
                 statusText = "🔒 Недоступно";
@@ -545,22 +519,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="quest-title">Уровень ${lvl}</div>
                 <div class="quest-desc">${levelData.description}</div>
                 <div class="quest-status">${statusText}</div>
-                ${actionHtml}
             `;
 
             questsList.appendChild(item);
         }
-
-        // Навешиваем обработчики на кнопки квестов
-        questsList.querySelectorAll(".quest-button").forEach(btn => {
-            const action = btn.dataset.action;
-            if (action === "pay_debt") {
-                btn.addEventListener("click", () => {
-                    const levelData = state.currentLevelData || Levels.get(state.season.level);
-                    handlePayDebt(levelData);
-                });
-            }
-        });
     }
 
     // =========================================================
