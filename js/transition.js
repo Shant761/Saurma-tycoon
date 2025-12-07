@@ -1,5 +1,5 @@
 // =============================================================
-//  transition.js — система переходов через метель
+//  transition.js — ГОТОВАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С МЕТЕЛЬЮ
 // =============================================================
 
 const BlizzardTransition = (() => {
@@ -7,45 +7,42 @@ const BlizzardTransition = (() => {
     const overlay = document.getElementById("blizzardOverlay");
     let isPlaying = false;
 
-    /**
-     * Запускает метель-переход.
-     * 
-     * @param {function} onMiddle  — вызывается, когда экран закрыт метелью
-     * @param {function} onEnd     — вызывается после завершения всей анимации
-     */
     function play(onMiddle = null, onEnd = null) {
         if (isPlaying) return;
         isPlaying = true;
 
-        // Добавляем класс анимации
+        if (!overlay) {
+            console.warn("blizzardOverlay не найден!");
+            onMiddle?.();
+            onEnd?.();
+            isPlaying = false;
+            return;
+        }
+
+        // Сбрасываем анимацию — без этого она НЕ перезапускается
+        overlay.classList.remove("blizzard-active");
+        void overlay.offsetWidth; // хак для перезапуска CSS-анимации
+
+        // Запускаем метель
         overlay.classList.add("blizzard-active");
 
-        // Длина анимации должна повторять CSS (1.3s)
-        const duration = 1300;
+        const duration = 1300;      // соответствует CSS
+        const middleTime = 650;     // 50% = закрытие экрана
 
-        // Точка середины (примерно 50%)
-        const middleTime = duration * 0.50;
-
-        // === ШАГ 1: когда метель полностью закрывает экран ===
+        // === СЕРЕДИНА МЕТЕЛИ: экран полностью закрыт ===
         setTimeout(() => {
-            if (typeof onMiddle === "function") {
-                onMiddle();
-            }
+            if (typeof onMiddle === "function") onMiddle();
         }, middleTime);
 
-        // === ШАГ 2: когда метель ушла вправо, освобождаем переход ===
+        // === КОНЕЦ АНИМАЦИИ ===
         setTimeout(() => {
             overlay.classList.remove("blizzard-active");
             isPlaying = false;
 
-            if (typeof onEnd === "function") {
-                onEnd();
-            }
+            if (typeof onEnd === "function") onEnd();
         }, duration);
     }
 
-    return {
-        play
-    };
+    return { play };
 
 })();
