@@ -1,4 +1,6 @@
-/* === ОБЩИЕ ПРАВИЛА === */
+/* =========================================================
+   ОСНОВНЫЕ СБРОСЫ
+   ========================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -15,31 +17,43 @@ body {
     overflow: hidden;
 }
 
-/* === ОБОЛОЧКА ИГРЫ === */
 #app {
     width: 100%;
     max-width: 430px;
     height: 100vh;
     max-height: 930px;
     overflow: hidden;
+    position: relative;
 }
 
-/* === ГЛАВНЫЙ ФОН УРОВНЯ === */
+/* =========================================================
+   ОСНОВНАЯ ИГРОВАЯ СЦЕНА
+   ========================================================= */
+
 .game-screen {
     width: 100%;
     height: 100%;
-    position: relative;
+    position: absolute;
+    top: 0; left: 0;
 
-    /* Фон уровня */
-    background-image: url("../img/season1_level1.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 
     overflow: hidden;
+    z-index: 100;
 }
 
-/* === УБИРАЕМ СТАРУЮ ШАУРМЯЧНУЮ СЦЕНУ === */
+.game-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* =========================================================
+   УБИРАЕМ СТАРЫЕ ЭЛЕМЕНТЫ (если есть в шаблоне)
+   ========================================================= */
+
 .scene-bg,
 .kebab-shop,
 .shop-roof,
@@ -49,15 +63,18 @@ body {
     display: none !important;
 }
 
-/* === СНЕГ === */
+/* =========================================================
+   СНЕГ
+   ========================================================= */
+
 #snowContainer {
     pointer-events: none;
-    position: fixed;
+    position: absolute;
     top: 0; left: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: 9999;
+    z-index: 200;
 }
 
 .snowflake {
@@ -74,7 +91,10 @@ body {
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0.4; }
 }
 
-/* === ВЕРХНЯЯ ПАНЕЛЬ === */
+/* =========================================================
+   UI — ВЕРХНЯЯ ПАНЕЛЬ
+   ========================================================= */
+
 .top-bar {
     display: flex;
     align-items: center;
@@ -82,7 +102,6 @@ body {
     padding: 10px 14px;
 }
 
-/* КНОПКИ */
 .icon-button {
     width: 42px;
     height: 42px;
@@ -96,7 +115,7 @@ body {
     justify-content: center;
 }
 
-/* Блоки ресурсов */
+/* Ресурсы (деньги, энергия) */
 .hud-card {
     display: flex;
     align-items: center;
@@ -114,7 +133,7 @@ body {
 
 .hud-label { opacity: 0.8; }
 
-/* ПРАВЫЙ ВЕРХ */
+/* Правый верх */
 .top-bar-right {
     display: flex;
     flex-direction: column;
@@ -131,7 +150,10 @@ body {
     backdrop-filter: blur(4px);
 }
 
-/* === ЛЕЙАУТ === */
+/* =========================================================
+   ОСНОВНОЙ ЛЕЙАУТ
+   ========================================================= */
+
 .main-layout {
     display: grid;
     grid-template-columns: 70px 1fr 70px;
@@ -140,7 +162,7 @@ body {
     gap: 10px;
 }
 
-/* БОКОВЫЕ КНОПКИ */
+/* Боковые кнопки */
 .side-card {
     border: none;
     background: linear-gradient(145deg, #ffffff, #e6f0ff);
@@ -155,7 +177,10 @@ body {
     color: #fff;
 }
 
-/* === ПРОГРЕСС === */
+/* =========================================================
+   ПРОГРЕСС ОЧЕРЕДИ
+   ========================================================= */
+
 .scene-progress {
     text-align: center;
     margin-top: 18px;
@@ -175,7 +200,10 @@ body {
     background: linear-gradient(90deg, #50f6d5, #00c7ab);
 }
 
-/* === КОПИЛКА === */
+/* =========================================================
+   КОПИЛКА
+   ========================================================= */
+
 .piggy-card {
     margin: 20px auto;
     width: 70%;
@@ -187,7 +215,10 @@ body {
     box-shadow: 0 5px 0 rgba(160,40,80,0.8);
 }
 
-/* === НИЖНЯЯ ПАНЕЛЬ === */
+/* =========================================================
+   НИЖНЯЯ ПАНЕЛЬ
+   ========================================================= */
+
 .bottom-bar {
     position: absolute;
     bottom: 0;
@@ -221,7 +252,7 @@ body {
     bottom: 80px;
 }
 
-/* ЭНЕРГИЯ */
+/* Энергия */
 .energy-bar {
     margin-top: 10px;
     display: flex;
@@ -242,7 +273,7 @@ body {
     border-radius: 20px;
 }
 
-/* НИЖНЕЕ МЕНЮ */
+/* Нижнее меню */
 .nav-icon {
     width: 46px;
     height: 46px;
@@ -252,12 +283,14 @@ body {
     color: #fff;
     font-size: 20px;
 }
-
 .nav-icon.active {
     background: #7c5eff;
 }
 
-/* ЛОГ */
+/* =========================================================
+   ЛОГ
+   ========================================================= */
+
 .log-panel {
     position: absolute;
     bottom: 150px;
@@ -270,7 +303,10 @@ body {
     font-size: 11px;
 }
 
-/* === АНИМАЦИИ === */
+/* =========================================================
+   АНИМАЦИИ КНОПОК И ТЕКСТА
+   ========================================================= */
+
 .button-press { transform: scale(0.92); }
 .button-release { transform: scale(1); transition: 0.2s; }
 
@@ -300,7 +336,10 @@ body {
     100% { transform: translateX(0); }
 }
 
-/* === POPUP === */
+/* =========================================================
+   POPUP
+   ========================================================= */
+
 .popup {
     position: fixed;
     top: 0; left: 0;
@@ -310,8 +349,6 @@ body {
     align-items: center;
     z-index: 9000;
 }
-
-.hidden { display: none !important; }
 
 .popup-bg {
     position: absolute;
@@ -343,4 +380,191 @@ body {
     display: flex;
     gap: 12px;
     box-shadow: 0 4px 0 rgba(0,0,0,0.28);
+}
+
+/* =========================================================
+   ЭКРАНЫ: LOADING / INTRO / END
+   ========================================================= */
+
+.screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+}
+
+.hidden { display: none !important; }
+
+/* Loading */
+
+.screen-loading {
+    background: rgba(0,0,0,0.85);
+    flex-direction: column;
+    gap: 20px;
+}
+
+.loading-title {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.loading-text {
+    color: #ddd;
+    font-size: 16px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* SEASON INTRO / LEVEL INTRO */
+
+.screen-intro {
+    text-align: center;
+    padding: 20px;
+}
+
+.intro-content {
+    max-width: 320px;
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+}
+
+.intro-title {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.intro-subtitle {
+    font-size: 18px;
+    color: #ffe4aa;
+    margin-bottom: 10px;
+}
+
+.intro-desc {
+    font-size: 16px;
+    color: #fff;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.intro-button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ff78c9, #ff3b8d);
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: 800;
+    box-shadow: 0 4px 0 rgba(150,30,80,0.7);
+}
+
+/* SEASON END */
+
+.screen-end .end-content {
+    text-align: center;
+    background: rgba(0,0,0,0.45);
+    padding: 26px;
+    border-radius: 20px;
+    max-width: 330px;
+    backdrop-filter: blur(10px);
+}
+
+.screen-end h2 {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.end-desc {
+    font-size: 16px;
+    color: #eee;
+    margin: 14px 0 20px;
+}
+
+/* =========================================================
+   METEЛЬ — BLIZZARD TRANSITION
+   ========================================================= */
+
+#blizzardOverlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 160%;
+    height: 100%;
+    background: url("../img/blizzard.png") repeat-y;
+    background-size: cover;
+    z-index: 10000;
+    pointer-events: none;
+    transform: translateX(-160%);
+    opacity: 1;
+}
+
+@keyframes blizzard-move {
+    0%   { transform: translateX(-160%); }
+    50%  { transform: translateX(0%); }
+    100% { transform: translateX(160%); }
+}
+
+.blizzard-active {
+    animation: blizzard-move 1.3s ease-in-out forwards;
+}
+
+/* =========================================================
+   АНИМАЦИИ СЦЕН
+   ========================================================= */
+
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+.fade-out {
+    animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    0%   { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.95); }
+}
+
+/* =========================================================
+   ГЕРОЙ (для будущих анимаций)
+   ========================================================= */
+
+#hero {
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    height: 480px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 300;
+    pointer-events: none;
 }
