@@ -23,7 +23,6 @@
         </div>
     </div>
 
-
     <!-- ============================= -->
     <!--     2. SEASON INTRO SCREEN    -->
     <!-- ============================= -->
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-
     <!-- ============================= -->
     <!--      3. LEVEL INTRO SCREEN    -->
     <!-- ============================= -->
@@ -54,7 +52,6 @@
             <button id="startLevelBtn" class="intro-button">Начать уровень</button>
         </div>
     </div>
-
 
     <!-- ============================= -->
     <!--      4. MAIN GAME SCREEN      -->
@@ -98,7 +95,6 @@
                     <div class="badge crown">👑 180</div>
                 </div>
             </header>
-
 
             <!-- ОСНОВНОЙ ЛЕЙАУТ -->
             <div class="main-layout">
@@ -176,7 +172,6 @@
 
             </div>
 
-
             <!-- НИЖНЯЯ ПАНЕЛЬ -->
             <footer class="bottom-bar">
                 <div class="bottom-top">
@@ -203,7 +198,7 @@
                         <div class="energy-track">
                             <div id="energyFill" class="energy-fill"></div>
                         </div>
-                        <span id="energyText" class="energy-text">50/50</span>
+                            <span id="energyText" class="energy-text">50/50</span>
                     </div>
                 </div>
 
@@ -216,11 +211,12 @@
                 </div>
             </footer>
 
-            <div class="log-panel"><ul id="logList"></ul></div>
+            <div class="log-panel">
+                <ul id="logList"></ul>
+            </div>
 
         </div>
     </div>
-
 
     <!-- ============================= -->
     <!--       5. SEASON END SCREEN    -->
@@ -235,49 +231,32 @@
         </div>
     </div>
 
-
     <!-- ====================================== -->
-    <!-- 6. BLIZZARD TRANSITION OVERLAY -->
+    <!-- 6. BLIZZARD TRANSITION OVERLAY         -->
     <!-- ====================================== -->
     <div id="blizzardOverlay"></div>
 
 </div> <!-- end #app -->
 
-
-
-<!-- ====================================================== -->
-<!--            POPUP МАГАЗИНА                              -->
-<!-- ====================================================== -->
-
+<!-- POPUP МАГАЗИНА -->
 <div id="shopPopup" class="popup hidden">
     <div class="popup-bg"></div>
-
     <div class="popup-window">
         <h2 class="popup-title">Улучшения</h2>
-
         <div id="upgradeList" class="upgrade-list"></div>
-
         <button id="closeShop" class="popup-close">Закрыть</button>
     </div>
 </div>
 
-
-<!-- ====================================================== -->
-<!--            POPUP КВЕСТОВ / УРОВНЕЙ                      -->
-<!-- ====================================================== -->
-
+<!-- POPUP КВЕСТОВ -->
 <div id="questsPopup" class="popup hidden">
     <div class="popup-bg"></div>
-
     <div class="popup-window">
         <h2 class="popup-title">Задачи сезона</h2>
-
         <div id="questsList" class="quests-list"></div>
-
         <button id="closeQuests" class="popup-close">Закрыть</button>
     </div>
 </div>
-
 
 <!-- СЦЕНАРИИ -->
 <script src="js/levels.js"></script>
