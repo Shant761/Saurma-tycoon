@@ -1,3 +1,7 @@
+// ====================================================================
+//  levels.js — структура уровней сезона 1
+// ====================================================================
+
 const Levels = (() => {
 
     const data = {
@@ -13,8 +17,7 @@ const Levels = (() => {
 
         2: {
             number: 2,
-            type: "action",
-            actionId: "pay_debt",
+            type: "pay_debt",
             goal: 10000,
             description: "Отдать долги 10 000 ֏",
             reward: 1500,
@@ -67,20 +70,19 @@ const Levels = (() => {
         }
     };
 
-    function get(levelNumber) {
-        return data[levelNumber] || null;
+    function get(level) {
+        return data[level] || null;
     }
 
-    function next(levelNumber) {
-        return data[levelNumber + 1] ? levelNumber + 1 : null;
+    function next(level) {
+        return data[level + 1] ? level + 1 : null;
     }
 
-    function isLast(levelNumber) {
-        return levelNumber === 7;
+    function isLast(level) {
+        return level === 7;
     }
 
     function checkGoal(levelData, state) {
-        if (!levelData) return false;
 
         switch (levelData.type) {
 
@@ -88,10 +90,10 @@ const Levels = (() => {
                 return state.stats.totalEarned >= levelData.goal;
 
             case "item":
-                return state.unlockedItems?.includes(levelData.goal);
+                return state.unlockedItems.includes(levelData.goal);
 
-            case "action":
-                return state.unlockedActions?.includes(levelData.actionId);
+            case "pay_debt":
+                return false; // НЕ выполняется автоматически!
 
             case "season_complete":
                 return true;
@@ -101,11 +103,6 @@ const Levels = (() => {
         }
     }
 
-    return {
-        get,
-        next,
-        isLast,
-        checkGoal
-    };
+    return { get, next, isLast, checkGoal };
 
 })();
