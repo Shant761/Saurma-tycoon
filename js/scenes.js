@@ -4,7 +4,6 @@
 
 const Scenes = (() => {
 
-    // Список доступных экранов
     const screens = {
         loading: document.getElementById("loadingScreen"),
         seasonIntro: document.getElementById("seasonIntroScreen"),
@@ -13,9 +12,6 @@ const Scenes = (() => {
         seasonEnd: document.getElementById("seasonEndScreen")
     };
 
-    /**
-     * Вспомогательная функция плавного показа экрана
-     */
     function show(id) {
         const el = screens[id];
         if (!el) return;
@@ -25,9 +21,15 @@ const Scenes = (() => {
         el.classList.add("fade-in");
     }
 
-    /**
-     * Вспомогательная функция скрытия экрана
-     */
+    function instantShow(id) {
+        const el = screens[id];
+        if (!el) return;
+
+        el.classList.remove("hidden");
+        el.classList.remove("fade-in");
+        el.classList.remove("fade-out");
+    }
+
     function hide(id) {
         const el = screens[id];
         if (!el) return;
@@ -35,32 +37,25 @@ const Scenes = (() => {
         el.classList.remove("fade-in");
         el.classList.add("fade-out");
 
-        // после анимации скрываем насовсем
         setTimeout(() => {
             el.classList.add("hidden");
         }, 350);
     }
 
-    /**
-     * Мгновенно скрывает экран (без анимации)
-     */
     function forceHide(id) {
         const el = screens[id];
         if (!el) return;
+
         el.classList.add("hidden");
+        el.classList.remove("fade-in");
+        el.classList.remove("fade-out");
     }
 
-    /**
-     * Переключение экрана A → B
-     */
     function switchTo(from, to) {
         hide(from);
         setTimeout(() => show(to), 120);
     }
 
-    /**
-     * Показывает заставку уровня с подстановкой данных
-     */
     function playLevelIntro(levelData) {
         const titleEl = document.getElementById("levelIntroTitle");
         const goalEl = document.getElementById("levelIntroGoal");
@@ -71,9 +66,6 @@ const Scenes = (() => {
         show("levelIntro");
     }
 
-    /**
-     * Прячем ВСЕ экраны (например, перед стартом сезона)
-     */
     function hideAll() {
         Object.keys(screens).forEach(k => forceHide(k));
     }
@@ -81,9 +73,11 @@ const Scenes = (() => {
     return {
         show,
         hide,
+        forceHide,
         switch: switchTo,
         playLevelIntro,
-        hideAll
+        hideAll,
+        instantShow
     };
 
 })();
