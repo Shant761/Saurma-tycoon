@@ -26,7 +26,81 @@ body {
     overflow: hidden;
     position: relative;
     background: #111;
+}/* =========================================================
+   МАГАЗИН — КРАСИВЫЕ КАРТОЧКИ
+   ========================================================= */
+
+.upgrade-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    background: linear-gradient(145deg, #f4f7ff, #e4ecff);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 14px;
+
+    box-shadow: 0 4px 0 rgba(0,0,0,0.15);
 }
+
+.upgrade-icon {
+    font-size: 32px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.18);
+}
+
+.upgrade-body {
+    flex: 1;
+}
+
+.upgrade-name {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.upgrade-level {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+/* Кнопка покупки */
+.upgrade-buy {
+    background: linear-gradient(135deg, #ff78c9, #ff3b8d);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 14px;
+
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+
+    box-shadow: 0 4px 0 rgba(150,30,80,0.7);
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.upgrade-buy:active {
+    transform: scale(0.9);
+}
+
+.upgrade-buy[disabled] {
+    background: #bbbbbb !important;
+    color: #eee;
+    box-shadow: 0 4px 0 #888;
+    cursor: default;
+    transform: none;
+}
+
 
 /* =========================================================
    GAME SCREEN
