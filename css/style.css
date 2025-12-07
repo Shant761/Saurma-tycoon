@@ -26,81 +26,7 @@ body {
     overflow: hidden;
     position: relative;
     background: #111;
-}/* =========================================================
-   МАГАЗИН — КРАСИВЫЕ КАРТОЧКИ
-   ========================================================= */
-
-.upgrade-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-
-    background: linear-gradient(145deg, #f4f7ff, #e4ecff);
-    border-radius: 18px;
-    padding: 14px;
-    margin-bottom: 14px;
-
-    box-shadow: 0 4px 0 rgba(0,0,0,0.15);
 }
-
-.upgrade-icon {
-    font-size: 32px;
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 0 rgba(0,0,0,0.18);
-}
-
-.upgrade-body {
-    flex: 1;
-}
-
-.upgrade-name {
-    font-size: 17px;
-    font-weight: 800;
-    margin-bottom: 4px;
-}
-
-.upgrade-level {
-    font-size: 14px;
-    opacity: 0.7;
-}
-
-/* Кнопка покупки */
-.upgrade-buy {
-    background: linear-gradient(135deg, #ff78c9, #ff3b8d);
-    border: none;
-    padding: 10px 14px;
-    border-radius: 14px;
-
-    color: white;
-    font-weight: 800;
-    font-size: 15px;
-
-    box-shadow: 0 4px 0 rgba(150,30,80,0.7);
-    cursor: pointer;
-
-    transition: transform 0.1s ease;
-}
-
-.upgrade-buy:active {
-    transform: scale(0.9);
-}
-
-.upgrade-buy[disabled] {
-    background: #bbbbbb !important;
-    color: #eee;
-    box-shadow: 0 4px 0 #888;
-    cursor: default;
-    transform: none;
-}
-
 
 /* =========================================================
    GAME SCREEN
@@ -109,24 +35,26 @@ body {
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
     border-radius: 22px;
     border: 3px solid rgba(255,255,255,0.25);
+
     overflow: hidden;
     z-index: 100;
 }
 
 .game-content {
-    position: relative;
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
-/* Скрытие старых элементов */
+/* отключаем старые декорации */
 .scene-bg,
 .kebab-shop,
 .shop-roof,
@@ -137,7 +65,7 @@ body {
 }
 
 /* =========================================================
-   SNOW EFFECT
+   SNOW
    ========================================================= */
 #snowContainer {
     pointer-events: none;
@@ -175,19 +103,19 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 50%;
+    border: none;
     background: rgba(255,255,255,0.3);
     backdrop-filter: blur(4px);
-    border: none;
     font-size: 20px;
 }
 
-/* Resources */
 .hud-card {
     display: flex;
     align-items: center;
-    gap: 6px;
     padding: 6px 12px;
+    gap: 6px;
     border-radius: 18px;
+
     background: linear-gradient(145deg, #ffeab6, #ffcc6b);
     box-shadow: 0 4px 0 rgba(180,140,30,0.6);
 }
@@ -201,13 +129,13 @@ body {
     padding: 4px 10px;
     border-radius: 20px;
     background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(4px);
     color: #fff;
     font-weight: 700;
-    backdrop-filter: blur(4px);
 }
 
 /* =========================================================
-   MAIN LAYOUT
+   LAYOUT
    ========================================================= */
 .main-layout {
     display: grid;
@@ -217,13 +145,14 @@ body {
     gap: 10px;
 }
 
-/* Side buttons */
+/* side buttons */
 .side-card {
-    background: linear-gradient(145deg, #ffffff, #e6f0ff);
-    padding: 10px 6px;
-    border-radius: 18px;
     border: none;
+    padding: 10px 6px;
     text-align: center;
+
+    border-radius: 18px;
+    background: linear-gradient(145deg, #ffffff, #e6f0ff);
     box-shadow: 0 4px 0 rgba(0,0,0,0.25);
 }
 
@@ -249,6 +178,7 @@ body {
 }
 
 .progress-fill {
+    width: 0%;
     height: 100%;
     border-radius: 20px;
     background: linear-gradient(90deg, #50f6d5, #00c7ab);
@@ -258,30 +188,34 @@ body {
    PIGGY BANK
    ========================================================= */
 .piggy-card {
-    margin: 20px auto;
-    width: 70%;
     padding: 12px;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #ff7aa8, #ff477e);
+    width: 70%;
+    margin: 20px auto;
+
     text-align: center;
-    box-shadow: 0 5px 0 rgba(160,40,80,0.8);
+    border-radius: 20px;
+
+    background: linear-gradient(145deg, #ff7aa8, #ff477e);
     color: white;
+    box-shadow: 0 5px 0 rgba(160,40,80,0.8);
 }
 
 /* =========================================================
-   HERO FIX (главная проблема)
+   HERO POSITION
    ========================================================= */
 #hero {
     position: absolute;
-    bottom: 155px; /* ← фиксированная высота над кнопкой */
+    bottom: 155px;
     left: 50%;
     transform: translateX(-50%);
+
     width: 360px;
     height: 480px;
     background-size: contain;
     background-repeat: no-repeat;
-    pointer-events: none;
+
     z-index: 300;
+    pointer-events: none;
 }
 
 /* =========================================================
@@ -299,12 +233,14 @@ body {
     margin-top: 10px;
     width: 100%;
     padding: 14px;
-    border-radius: 999px;
-    border: none;
+
     background: linear-gradient(145deg, #ff75c8, #ff3e92);
-    font-size: 16px;
+    color: white;
     font-weight: 800;
-    color: #fff;
+    font-size: 16px;
+
+    border: none;
+    border-radius: 999px;
     box-shadow: 0 6px 0 rgba(150,30,80,0.9);
 }
 
@@ -317,8 +253,8 @@ body {
 .energy-track {
     flex: 1;
     height: 12px;
-    border-radius: 20px;
     background: rgba(0,0,0,0.25);
+    border-radius: 20px;
 }
 
 .energy-fill {
@@ -327,14 +263,14 @@ body {
     background: linear-gradient(90deg, #50f6d5, #00c7ab);
 }
 
-/* Bottom menu icons */
 .nav-icon {
     width: 46px;
     height: 46px;
-    background: rgba(0,0,0,0.25);
     border-radius: 50%;
     border: none;
-    color: #fff;
+
+    background: rgba(0,0,0,0.25);
+    color: white;
     font-size: 20px;
 }
 
@@ -349,27 +285,32 @@ body {
     position: absolute;
     bottom: 200px;
     left: 10px;
+
     width: 140px;
-    background: rgba(0,0,0,0.35);
     padding: 8px;
     border-radius: 16px;
+
+    background: rgba(0,0,0,0.35);
     color: #fff;
     font-size: 11px;
 }
 
 /* =========================================================
-   POPUPS
+   POPUP WINDOWS
    ========================================================= */
 .popup {
     position: fixed;
     inset: 0;
+    z-index: 9000;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9000;
 }
 
-.popup.hidden { display: none !important; }
+.popup.hidden {
+    display: none !important;
+}
 
 .popup-bg {
     position: absolute;
@@ -380,20 +321,105 @@ body {
 
 .popup-window {
     position: relative;
+    z-index: 10000;
+
     width: 92%;
     max-width: 380px;
+
     background: white;
     border-radius: 22px;
     padding: 20px;
-    z-index: 10000;
-    animation: popupShow .35s ease;
+
     max-height: 80vh;
     overflow-y: auto;
+
+    animation: popupShow .35s ease;
 }
 
 @keyframes popupShow {
     0% { transform: scale(0.7); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
+}
+
+/* =========================================================
+   UPGRADE CARDS (SHOP)
+   ========================================================= */
+.upgrade-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 16px;
+    margin-bottom: 14px;
+
+    border-radius: 20px;
+    background: linear-gradient(150deg, #f9fbff, #e8efff);
+
+    box-shadow: 0 6px 0 rgba(0,0,0,0.18);
+    animation: upgradeFade .25s ease forwards;
+    opacity: 0;
+}
+
+@keyframes upgradeFade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.upgrade-icon {
+    font-size: 32px;
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 0 rgba(0,0,0,0.20);
+}
+
+.upgrade-body {
+    flex: 1;
+}
+
+.upgrade-name {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.upgrade-level {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.upgrade-buy {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 14px;
+
+    background: linear-gradient(145deg, #ff75c8, #ff3d97);
+    color: white;
+
+    font-size: 15px;
+    font-weight: 900;
+
+    box-shadow: 0 4px 0 rgba(150,30,80,0.75);
+    cursor: pointer;
+
+    transition: transform .12s ease;
+}
+
+.upgrade-buy:active {
+    transform: scale(0.92);
+}
+
+.upgrade-buy[disabled] {
+    background: #b8b8b8 !important;
+    color: #eee;
+    box-shadow: 0 4px 0 #888;
+    cursor: default;
 }
 
 /* =========================================================
@@ -410,29 +436,37 @@ body {
 .quest-button {
     width: 100%;
     padding: 10px;
-    border-radius: 12px;
     border: none;
-    font-size: 16px;
+    border-radius: 12px;
+
     background: linear-gradient(135deg, #ff78c9, #ff3b8d);
-    color: #fff;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 800;
+
     box-shadow: 0 4px 0 rgba(150,30,80,0.7);
 }
 
 /* =========================================================
-   INTRO / LOADING
+   LOADING / INTRO / END
    ========================================================= */
 .screen {
     position: absolute;
     inset: 0;
     z-index: 5000;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
+
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
 }
 
-.hidden { display: none !important; }
+.hidden {
+    display: none !important;
+}
 
 .screen-loading {
     background: rgba(0,0,0,0.85);
@@ -443,9 +477,9 @@ body {
 .loading-spinner {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     border: 5px solid rgba(255,255,255,0.3);
     border-top-color: #fff;
+    border-radius: 50%;
     animation: spin .9s linear infinite;
 }
 
@@ -454,22 +488,17 @@ body {
     to { transform: rotate(360deg); }
 }
 
-.screen-end .end-content {
-    text-align: center;
-    padding: 26px;
-    background: rgba(0,0,0,0.45);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-}
-
 /* =========================================================
-   BLIZZARD TRANSITION
+   BLIZZARD
    ========================================================= */
 #blizzardOverlay {
     position: fixed;
     inset: 0;
     width: 120%;
+
     transform: translateX(-140%);
+    opacity: 0.8;
+
     background: repeating-linear-gradient(
         -10deg,
         rgba(255,255,255,0.85) 0px,
@@ -477,8 +506,8 @@ body {
         rgba(255,255,255,0.55) 8px,
         rgba(255,255,255,0) 16px
     );
+
     background-size: 100% 220px;
-    opacity: 0.8;
     pointer-events: none;
     z-index: 10000;
 }
@@ -488,7 +517,7 @@ body {
 }
 
 @keyframes blizzard-move {
-    0%   { transform: translateX(-140%); }
-    50%  { transform: translateX(0%); }
+    0% { transform: translateX(-140%); }
+    50% { transform: translateX(0%); }
     100% { transform: translateX(140%); }
 }
