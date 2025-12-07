@@ -1,6 +1,6 @@
-// =============================================================
-//  transition.js — ГОТОВАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С МЕТЕЛЬЮ
-// =============================================================
+// ====================================================================
+//  transition.js — МЕТЕЛЬ ДЛЯ ПЕРЕХОДОВ (BlizzardTransition)
+// ====================================================================
 
 const BlizzardTransition = (() => {
 
@@ -8,39 +8,50 @@ const BlizzardTransition = (() => {
     let isPlaying = false;
 
     function play(onMiddle = null, onEnd = null) {
-        if (isPlaying) return;
+        if (isPlaying) return; // блокируем двойные вызовы
         isPlaying = true;
 
         if (!overlay) {
-            console.warn("blizzardOverlay не найден!");
+            console.warn("⚠ blizzardOverlay не найден!");
             onMiddle?.();
             onEnd?.();
             isPlaying = false;
             return;
         }
 
-        // Сбрасываем анимацию — без этого она НЕ перезапускается
+        // Полный сброс предыдущей анимации
         overlay.classList.remove("blizzard-active");
-        void overlay.offsetWidth; // хак для перезапуска CSS-анимации
+        overlay.style.animation = "none";
+        void overlay.offsetHeight; // перезапуск CSS-анимации
+        overlay.style.animation = "";
 
         // Запускаем метель
         overlay.classList.add("blizzard-active");
 
-        const duration = 1300;      // соответствует CSS
-        const middleTime = 650;     // 50% = закрытие экрана
+        const duration = 1300;  // как в CSS
+        const middle = 650;      // точное время закрытия экрана
 
-        // === СЕРЕДИНА МЕТЕЛИ: экран полностью закрыт ===
-        setTimeout(() => {
-            if (typeof onMiddle === "function") onMiddle();
-        }, middleTime);
+        // === СЕРЕДИНА АНИМАЦИИ ===
+        const midTimer = setTimeout(() => {
+            if (typeof onMiddle === "function") {
+                try { onMiddle(); }
+                catch (err) { console.error("Ошибка onMiddle:", err); }
+            }
+        }, middle);
 
         // === КОНЕЦ АНИМАЦИИ ===
-        setTimeout(() => {
+        const endTimer = setTimeout(() => {
             overlay.classList.remove("blizzard-active");
             isPlaying = false;
 
-            if (typeof onEnd === "function") onEnd();
+            if (typeof onEnd === "function") {
+                try { onEnd(); }
+                catch (err) { console.error("Ошибка onEnd:", err); }
+            }
         }, duration);
+
+        // Чтобы GC не держал ссылки
+        return { midTimer, endTimer };
     }
 
     return { play };
