@@ -1,7 +1,10 @@
 // js/game.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    // === СОСТОЯНИЕ ИГРЫ ===
+
+    // =========================================================
+    // СОСТОЯНИЕ ИГРЫ
+    // =========================================================
     const state = {
         money: 0,
         incomePerClick: 5,
@@ -15,15 +18,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // статистика
         stats: {
-            shawarmasSold: 0,   // продано шаурм
-            totalEarned: 0      // всего заработано за всё время (для уровней)
+            shawarmasSold: 0,     // продано шаурм
+            totalEarned: 0        // всего заработано за всё время
         },
 
-        // сезон 1: "Голодный повар"
+        // сезон 1
         season: {
-            level: 1,   // 1..7
+            level: 1,
             maxLevel: 7
         },
+
+        // какие предметы уже куплены (для целей уровней типа "item")
+        unlockedItems: [],
+
+        // текущий уровень (данные из Levels.get)
+        currentLevelData: null,
+
+        // флаг, чтобы не срабатывать завершение уровня много раз
+        levelCompleted: false,
 
         // улучшения
         upgrades: {
@@ -37,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 level: 0,
                 baseCost: 120,
                 icon: "🤖",
-                name: "Авто-повар"
+                name: "Авто-повар (позже)"
             },
             energyMax: {
                 level: 0,
@@ -50,58 +62,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 baseCost: 70,
                 icon: "🚶",
                 name: "Очередь клиентов"
+            },
+
+            // СПЕЦИАЛЬНЫЕ ПРЕДМЕТЫ ДЛЯ УРОВНЕЙ
+            item_mangal: {
+                level: 0,
+                baseCost: 20000,
+                icon: "🔥",
+                name: "Мангал",
+                isItem: true,
+                itemKey: "item_mangal"
+            },
+            item_heating: {
+                level: 0,
+                baseCost: 30000,
+                icon: "🔥",
+                name: "Отопление",
+                isItem: true,
+                itemKey: "item_heating"
+            },
+            item_generator: {
+                level: 0,
+                baseCost: 40000,
+                icon: "🔌",
+                name: "Генератор",
+                isItem: true,
+                itemKey: "item_generator"
             }
         }
     };
 
-    // === ФОНЫ ДЛЯ УРОВНЕЙ СЕЗОНА 1 ===
-    // файлы должны лежать в /img
-    const seasonBackgrounds = {
-        1: "img/season1_level1.png",
-        2: "img/season1_level2.png",
-        3: "img/season1_level3.png",
-        4: "img/season1_level4.png",
-        5: "img/season1_level5.png",
-        6: "img/season1_level6.png",
-        7: "img/season1_level7.png"
-    };
-
-    // === УСЛОВИЯ ПЕРЕХОДА МЕЖДУ УРОВНЯМИ (по totalEarned, в ֏) ===
-    const seasonLevelConditions = {
-        // 1 ➜ 2: собрать 5 000 ֏ чтобы не умереть
-        1: {
-            minTotalEarned: 5000,
-            description: "Ты выжил, собрав 5 000 ֏ и не умер от голода"
-        },
-        // 2 ➜ 3: отдать долги 10 000 => суммарно 15 000
-        2: {
-            minTotalEarned: 15000,
-            description: "Отдал долги на 10 000 ֏ и стал свободнее"
-        },
-        // 3 ➜ 4: собрать мангал — считаем по заработку
-        3: {
-            minTotalEarned: 30000,
-            description: "Собрал свой первый мангал"
-        },
-        // 4 ➜ 5: первый клиент 15 000 ֏
-        4: {
-            minTotalEarned: 45000,
-            description: "Поймал первого богатого клиента на 15 000 ֏"
-        },
-        // 5 ➜ 6: купить отопление
-        5: {
-            minTotalEarned: 65000,
-            description: "Смог позволить себе отопление в доме"
-        },
-        // 6 ➜ 7: купить генератор
-        6: {
-            minTotalEarned: 90000,
-            description: "Купил генератор — да здравствует свет!"
-        }
-        // 7 — финал сезона
-    };
-
-    // === DOM-ЭЛЕМЕНТЫ ===
+    // =========================================================
+    // DOM-ЭЛЕМЕНТЫ
+    // =========================================================
     const moneyValueEl   = document.getElementById("moneyValue");
     const energyValueEl  = document.getElementById("energyValue");
     const energyTextEl   = document.getElementById("energyText");
@@ -132,9 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnTrophy      = document.getElementById("btnTrophy");
 
     const snowContainer  = document.getElementById("snowContainer");
-    const gameScreenEl   = document.querySelector(".game-screen");
+    const gameScreenEl   = document.getElementById("gameScreen");
 
-    // === ВСПОМОГАТЕЛЬНЫЕ ===
+    // экраны сцен
+    const startSeasonBtn = document.getElementById("startSeasonBtn");
+    const startLevelBtn  = document.getElementById("startLevelBtn");
+
+
+    // =========================================================
+    // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ UI
+    // =========================================================
     function addLog(message) {
         if (!logList) return;
         const li = document.createElement("li");
@@ -150,10 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateMoneyView() {
+        if (!moneyValueEl) return;
         moneyValueEl.textContent = formatMoney(state.money);
     }
 
     function updateEnergyView() {
+        if (!energyValueEl || !energyTextEl || !energyFillEl) return;
+
         energyValueEl.textContent = `${state.energy}/${state.energyMax}`;
         energyTextEl.textContent  = `${state.energy}/${state.energyMax}`;
         const percent = (state.energy / state.energyMax) * 100;
@@ -161,17 +164,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateQueueView() {
+        if (!queueFillEl || !queueValueEl) return;
         queueValueEl.textContent = `${state.queueCurrent} / ${state.queueMax}`;
         const percent = (state.queueCurrent / state.queueMax) * 100;
         queueFillEl.style.width = `${Math.max(0, Math.min(100, percent))}%`;
     }
 
     function updateBoostView() {
+        if (!boostLabelEl) return;
         boostLabelEl.textContent = `x${state.boostMultiplier}`;
     }
 
-    // === АНИМАЦИИ ===
+    // применить фон уровня по данным Levels
+    function applyLevelBackground(levelData) {
+        if (!gameScreenEl || !levelData) return;
+        if (levelData.background) {
+            gameScreenEl.style.backgroundImage = `url("${levelData.background}")`;
+            gameScreenEl.style.backgroundSize = "cover";
+            gameScreenEl.style.backgroundPosition = "center";
+            gameScreenEl.style.backgroundRepeat = "no-repeat";
+        }
+    }
+
+    // =========================================================
+    // АНИМАЦИИ (кнопки, всплывающий текст)
+    // =========================================================
     function animateButton(btn) {
+        if (!btn) return;
         btn.classList.add("button-press");
         setTimeout(() => {
             btn.classList.remove("button-press");
@@ -190,7 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => el.remove(), 900);
     }
 
-    // === СНЕГ ===
+    // =========================================================
+    // СНЕГ (фоновые снежинки, не метель)
+    // =========================================================
     function spawnSnowflake() {
         if (!snowContainer) return;
 
@@ -207,7 +228,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(spawnSnowflake, 250);
 
-    // === БУСТ ===
+    function tryDropSnowflakeReward(x, y) {
+        if (Math.random() < 0.12) {
+            spawnFloatingText("❄️", x, y - 20);
+        }
+    }
+
+    // =========================================================
+    // БУСТ
+    // =========================================================
     function activateBoost(multiplier = 3, duration = 15000) {
         if (state.boostActive) return;
 
@@ -216,8 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBoostView();
         addLog(`Буст x${multiplier} активирован`);
 
-        btnBoost.classList.add("btn-glow");
-        boostIndicator.classList.add("btn-glow");
+        if (btnBoost) btnBoost.classList.add("btn-glow");
+        if (boostIndicator) boostIndicator.classList.add("btn-glow");
 
         if (state.boostTimerId) clearTimeout(state.boostTimerId);
 
@@ -225,25 +254,29 @@ document.addEventListener("DOMContentLoaded", () => {
             state.boostActive = false;
             state.boostMultiplier = 1;
             updateBoostView();
-            btnBoost.classList.remove("btn-glow");
-            boostIndicator.classList.remove("btn-glow");
+            if (btnBoost) btnBoost.classList.remove("btn-glow");
+            if (boostIndicator) boostIndicator.classList.remove("btn-glow");
             addLog("Буст закончился");
         }, duration);
     }
 
-    function tryDropSnowflakeReward(x, y) {
-        if (Math.random() < 0.12) {
-            spawnFloatingText("❄️", x, y - 20);
-        }
-    }
-
-    // === УЛУЧШЕНИЯ ===
+    // =========================================================
+    // УЛУЧШЕНИЯ И МАГАЗИН
+    // =========================================================
     function getUpgradeCost(up) {
         return Math.floor(up.baseCost * Math.pow(1.25, up.level));
     }
 
     function buyUpgrade(key) {
         const up = state.upgrades[key];
+        if (!up) return;
+
+        // одноразовые предметы
+        if (up.isItem && up.level >= 1) {
+            addLog("Этот предмет уже куплен");
+            return;
+        }
+
         const cost = getUpgradeCost(up);
 
         if (state.money < cost) {
@@ -254,6 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.money -= cost;
         up.level++;
 
+        // обычные улучшения
         if (key === "clickIncome") {
             state.incomePerClick += 2;
         }
@@ -265,16 +299,25 @@ document.addEventListener("DOMContentLoaded", () => {
             state.queueMax += 2;
         }
 
+        // специальные предметы (для уровней)
+        if (up.isItem && up.itemKey) {
+            if (!state.unlockedItems.includes(up.itemKey)) {
+                state.unlockedItems.push(up.itemKey);
+                addLog(`Получен предмет: ${up.name}`);
+            }
+        }
+
         updateMoneyView();
         updateEnergyView();
         updateQueueView();
         renderUpgrades();
 
         addLog(`Улучшено: ${up.name}`);
-        checkSeasonProgress("upgrade");
+        checkCurrentLevelGoal("upgrade");
     }
 
     function renderUpgrades() {
+        if (!upgradeList) return;
         upgradeList.innerHTML = "";
 
         for (let key in state.upgrades) {
@@ -284,6 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const card = document.createElement("div");
             card.className = "upgrade-item";
             card.dataset.key = key;
+
+            const isItem = !!up.isItem;
 
             card.innerHTML = `
                 <div class="upgrade-icon">${up.icon}</div>
@@ -297,139 +342,260 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
 
-                <button class="upgrade-buy">Купить<br>${formatMoney(cost)}</button>
+                <button class="upgrade-buy">
+                    ${isItem && up.level > 0 ? "Куплено" : `Купить<br>${formatMoney(cost)}`}
+                </button>
             `;
 
-            card.querySelector(".upgrade-buy").addEventListener("click", () => buyUpgrade(key));
+            const btn = card.querySelector(".upgrade-buy");
+            btn.addEventListener("click", () => buyUpgrade(key));
+
             upgradeList.appendChild(card);
         }
     }
 
-    // === POPUP МАГАЗИНА ===
-    btnShop.addEventListener("click", () => {
-        animateButton(btnShop);
-        shopPopup.classList.remove("hidden");
-        renderUpgrades();
-    });
-
-    closeShopBtn.addEventListener("click", () => {
-        shopPopup.classList.add("hidden");
-    });
-
-    // === СЕЗОН 1: ФОН + ПРОГРЕСС ===
-    function applySeasonBackground() {
-        if (!gameScreenEl) return;
-
-        const lvl = state.season.level;
-        const url = seasonBackgrounds[lvl];
-
-        if (url) {
-            gameScreenEl.style.backgroundImage = `url("${url}")`;
-            gameScreenEl.style.backgroundSize = "cover";
-            gameScreenEl.style.backgroundPosition = "center";
-            gameScreenEl.style.backgroundRepeat = "no-repeat";
-        }
+    // POPUP МАГАЗИНА
+    if (btnShop && shopPopup) {
+        btnShop.addEventListener("click", () => {
+            animateButton(btnShop);
+            shopPopup.classList.remove("hidden");
+            renderUpgrades();
+        });
     }
 
-    function levelUpSeason(newLevel, description) {
-        state.season.level = newLevel;
-        applySeasonBackground();
-        addLog(`Новый уровень сезона: ${newLevel} — ${description}`);
-
-        // маленькая награда за уровень
-        const bonus = 1000 * newLevel;
-        state.money += bonus;
-        updateMoneyView();
-        addLog(`Бонус за уровень: +${formatMoney(bonus)}`);
+    if (closeShopBtn && shopPopup) {
+        closeShopBtn.addEventListener("click", () => {
+            shopPopup.classList.add("hidden");
+        });
     }
 
-    function checkSeasonProgress(triggerSource) {
-        const lvl = state.season.level;
-        if (lvl >= state.season.maxLevel) return;
+    // =========================================================
+    // СЕЗОН / УРОВНИ
+    // =========================================================
 
-        const cond = seasonLevelConditions[lvl];
-        if (!cond) return;
-
-        const earned = state.stats.totalEarned;
-        if (earned >= cond.minTotalEarned) {
-            const nextLevel = lvl + 1;
-            levelUpSeason(nextLevel, cond.description);
-        }
+    function setCurrentLevel(levelNumber) {
+        const levelData = Levels.get(levelNumber);
+        state.season.level = levelNumber;
+        state.currentLevelData = levelData;
+        state.levelCompleted = false;
+        return levelData;
     }
 
-    // === КНОПКА ГОТОВКИ ===
-    cookButton.addEventListener("click", (event) => {
-        animateButton(cookButton);
+    function showSeasonIntro() {
+        Scenes.hideAll();
+        Scenes.show("seasonIntro");
+    }
 
-        if (state.energy <= 0) {
-            addLog("Недостаточно энергии!");
+    function showLevelIntro(levelNumber) {
+        const levelData = setCurrentLevel(levelNumber);
+        Scenes.hideAll();
+        Scenes.playLevelIntro(levelData);
+    }
+
+    function startCurrentLevelGameplay() {
+        const levelData = state.currentLevelData || Levels.get(state.season.level);
+        if (!levelData) return;
+
+        // если это финальный "season_complete", просто покажем экран конца
+        if (levelData.type === "season_complete") {
+            BlizzardTransition.play(
+                () => {
+                    Scenes.hideAll();
+                    // можно потом сюда добавить отдельный текст финала
+                    Scenes.show("seasonEnd");
+                }
+            );
             return;
         }
 
-        const income = state.incomePerClick * state.boostMultiplier;
+        BlizzardTransition.play(
+            () => {
+                // середина метели — подменяем сцену и фон
+                Scenes.hideAll();
+                applyLevelBackground(levelData);
+                Scenes.show("game");
+                addLog(`Уровень ${levelData.number} начат: ${levelData.description}`);
+            }
+        );
+    }
 
-        spawnFloatingText(`+${formatMoney(income)}`, event.clientX, event.clientY - 20);
-        tryDropSnowflakeReward(event.clientX, event.clientY - 40);
+    function handleLevelComplete() {
+        if (state.levelCompleted) return;
+        state.levelCompleted = true;
 
-        state.money += income;
-        state.stats.totalEarned += income;
-        state.energy = Math.max(0, state.energy - 1);
+        const levelData = state.currentLevelData;
+        if (!levelData) return;
 
-        state.queueCurrent++;
-        if (state.queueCurrent > state.queueMax) {
-            state.queueCurrent = 1;
+        addLog(`Уровень ${levelData.number} выполнен! 🎉`);
+
+        // награда за уровень
+        if (levelData.reward && levelData.reward > 0) {
+            state.money += levelData.reward;
+            state.stats.totalEarned += levelData.reward;
+            updateMoneyView();
+            addLog(`Награда за уровень: +${formatMoney(levelData.reward)}`);
         }
 
-        state.stats.shawarmasSold++;
+        // если это был последний уровень (6-й с геймплеем → затем 7-й финальный)
+        if (Levels.isLast(levelData.number)) {
+            // теоретически сюда не попадем, сезон заканчиваем через level 7 type season_complete
+            BlizzardTransition.play(
+                () => {
+                    Scenes.hideAll();
+                    Scenes.show("seasonEnd");
+                }
+            );
+            return;
+        }
 
+        const nextLevel = Levels.next(levelData.number);
+        if (!nextLevel) return;
+
+        state.season.level = nextLevel;
+        state.currentLevelData = Levels.get(nextLevel);
+
+        BlizzardTransition.play(
+            () => {
+                // прячем игру, показываем заставку следующего уровня
+                Scenes.hideAll();
+                Scenes.playLevelIntro(state.currentLevelData);
+            }
+        );
+    }
+
+    function checkCurrentLevelGoal(triggerSource) {
+        const levelData = state.currentLevelData;
+        if (!levelData || state.levelCompleted) return;
+
+        const isDone = Levels.checkGoal(levelData, state);
+        if (isDone) {
+            addLog(`Цель уровня достигнута (${triggerSource})`);
+            handleLevelComplete();
+        }
+    }
+
+    // =========================================================
+    // КНОПКА ГОТОВКИ (ГЛАВНЫЙ КЛИК)
+    // =========================================================
+    if (cookButton) {
+        cookButton.addEventListener("click", (event) => {
+            animateButton(cookButton);
+
+            if (state.energy <= 0) {
+                addLog("Недостаточно энергии!");
+                return;
+            }
+
+            const income = state.incomePerClick * state.boostMultiplier;
+
+            spawnFloatingText(`+${formatMoney(income)}`, event.clientX, event.clientY - 20);
+            tryDropSnowflakeReward(event.clientX, event.clientY - 40);
+
+            state.money += income;
+            state.stats.totalEarned += income;
+            state.energy = Math.max(0, state.energy - 1);
+
+            state.queueCurrent++;
+            if (state.queueCurrent > state.queueMax) {
+                state.queueCurrent = 1;
+            }
+
+            state.stats.shawarmasSold++;
+
+            updateMoneyView();
+            updateEnergyView();
+            updateQueueView();
+
+            addLog(`Продана шаурма: ${formatMoney(income)}`);
+            checkCurrentLevelGoal("cook");
+        });
+    }
+
+    // =========================================================
+    // ПРОЧИЕ КНОПКИ (пока простые логи)
+    // =========================================================
+    if (btnSuppliers) btnSuppliers.addEventListener("click", () => addLog("Поставщики (в разработке)"));
+    if (btnQuests)    btnQuests.addEventListener("click",    () => addLog("Квесты (в разработке)"));
+    if (btnOffer1)    btnOffer1.addEventListener("click",    () => addLog("Оффер 1"));
+
+    if (btnOffer2) {
+        btnOffer2.addEventListener("click", () => {
+            addLog("Новогодний оффер: мягкий буст x2");
+            activateBoost(2, 10000);
+        });
+    }
+
+    if (btnBoost) btnBoost.addEventListener("click", () => activateBoost(3, 15000));
+
+    if (btnPiggy) {
+        btnPiggy.addEventListener("click", () => {
+            animateButton(btnPiggy);
+            btnPiggy.classList.add("shake");
+            setTimeout(() => btnPiggy.classList.remove("shake"), 400);
+
+            const bonus = 500;
+            state.money += bonus;
+            state.stats.totalEarned += bonus;
+
+            updateMoneyView();
+            addLog(`Копилка: +${formatMoney(bonus)}`);
+            checkCurrentLevelGoal("piggy");
+        });
+    }
+
+    if (btnMenu)       btnMenu.addEventListener("click",       () => addLog("Меню"));
+    if (btnShopBottom) btnShopBottom.addEventListener("click", () => addLog("Магазин (нижнее меню)"));
+    if (btnHearts)     btnHearts.addEventListener("click",     () => addLog("Жизни (декор)"));
+    if (btnHome)       btnHome.addEventListener("click",       () => addLog("Главная"));
+    if (btnFriends)    btnFriends.addEventListener("click",    () => addLog("Друзья (в будущем)"));
+    if (btnTrophy)     btnTrophy.addEventListener("click",     () => addLog("Турнир (в будущем)"));
+
+    // =========================================================
+    // КНОПКИ СЦЕН (СТАРТ СЕЗОНА / СТАРТ УРОВНЯ)
+    // =========================================================
+    if (startSeasonBtn) {
+        startSeasonBtn.addEventListener("click", () => {
+            animateButton(startSeasonBtn);
+            BlizzardTransition.play(
+                () => {
+                    showLevelIntro(1);
+                }
+            );
+        });
+    }
+
+    if (startLevelBtn) {
+        startLevelBtn.addEventListener("click", () => {
+            animateButton(startLevelBtn);
+            startCurrentLevelGameplay();
+        });
+    }
+
+    // =========================================================
+    // ИНИЦИАЛИЗАЦИЯ
+    // =========================================================
+    function init() {
         updateMoneyView();
         updateEnergyView();
         updateQueueView();
+        updateBoostView();
 
-        addLog(`Продана шаурма: ${formatMoney(income)}`);
-        checkSeasonProgress("cook");
-    });
+        // Сначала показываем экран загрузки
+        Scenes.hideAll();
+        Scenes.show("loading");
 
-    // === ПРОЧИЕ КНОПКИ ===
-    btnSuppliers.addEventListener("click", () => addLog("Поставщики (в разработке)"));
-    btnQuests.addEventListener("click", () => addLog("Квесты (в разработке)"));
-    btnOffer1.addEventListener("click", () => addLog("Оффер 1"));
+        addLog("Игра загружена");
 
-    btnOffer2.addEventListener("click", () => {
-        addLog("Новогодний оффер: мягкий буст x2");
-        activateBoost(2, 10000);
-    });
+        // Небольшая "задержка" загрузки, затем вступление сезона
+        setTimeout(() => {
+            BlizzardTransition.play(
+                () => {
+                    showSeasonIntro();
+                    addLog("Сезон 1: Голодный повар");
+                }
+            );
+        }, 800);
+    }
 
-    btnBoost.addEventListener("click", () => activateBoost(3, 15000));
-
-    btnPiggy.addEventListener("click", () => {
-        animateButton(btnPiggy);
-        btnPiggy.classList.add("shake");
-        setTimeout(() => btnPiggy.classList.remove("shake"), 400);
-
-        const bonus = 500;
-        state.money += bonus;
-        state.stats.totalEarned += bonus;
-
-        updateMoneyView();
-        addLog(`Копилка: +${formatMoney(bonus)}`);
-        checkSeasonProgress("piggy");
-    });
-
-    btnMenu.addEventListener("click", () => addLog("Меню"));
-    btnShopBottom.addEventListener("click", () => addLog("Магазин (нижнее меню)"));
-    btnHearts.addEventListener("click", () => addLog("Жизни (декор)"));
-    btnHome.addEventListener("click", () => addLog("Главная"));
-    btnFriends.addEventListener("click", () => addLog("Друзья (в будущем)"));
-    btnTrophy.addEventListener("click", () => addLog("Турнир (в будущем)"));
-
-    // === ИНИЦИАЛИЗАЦИЯ ===
-    applySeasonBackground();
-    updateMoneyView();
-    updateEnergyView();
-    updateQueueView();
-    updateBoostView();
-
-    addLog("Игра загружена");
-    addLog(`Сезон 1: уровень ${state.season.level}`);
+    init();
 });
