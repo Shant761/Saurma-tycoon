@@ -2,6 +2,25 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    // Ждём пока game.js создаст window.Game
+    const Game = window.Game;
+    if (!Game) {
+        console.error("Ошибка: window.Game не найден. Проверь порядок подключения скриптов!");
+        return;
+    }
+
+    // Достаём функции из Game
+    const {
+        renderUpgrades,
+        renderQuests,
+        activateBoost,
+        handleCook,
+        showLevelIntro,
+        startCurrentLevelGameplay,
+        addLog
+    } = Game;
+
+
     // ================================
     // ПОЛУЧАЕМ ЭЛЕМЕНТЫ UI
     // ================================
@@ -25,13 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // UNIVERSAL BUTTON ANIMATION
+    // АНИМАЦИЯ НАЖАТИЯ
     // =========================================================
     function tap(btn) {
         if (!btn) return;
         btn.classList.add("button-press");
         setTimeout(() => btn.classList.remove("button-press"), 120);
     }
+
 
     // =========================================================
     // МАГАЗИН
@@ -78,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ГОТОВКА
     // =========================================================
     cookButton.onclick = (e) => {
+        tap(cookButton);
         handleCook(e.clientX, e.clientY);
     };
 
@@ -87,13 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
     btnPiggy.onclick = () => {
         tap(btnPiggy);
-        addLog("Ты забрал деньги из копилки!");
-        // TODO: Добавить механику копилки
+        addLog("Ты забрал деньги из копилки! (механика появится позже)");
     };
 
 
     // =========================================================
-    // ЭКРАНЫ
+    // ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
     // =========================================================
     startSeasonBtn.onclick = () => {
         tap(startSeasonBtn);
