@@ -429,14 +429,14 @@ document.addEventListener("DOMContentLoaded", () => {
             state.energy++;
             updateEnergyView();
         }
-    }, 2000);
+    }, 200);
 
     setInterval(() => {
         if (state.queueCurrent < state.queueMax) {
             state.queueCurrent++;
             updateQueueView();
         }
-    }, 3000);
+    }, 300);
 
     // =========================================================
     // ИНИЦИАЛИЗАЦИЯ
